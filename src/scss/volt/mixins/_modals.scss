@@ -1,0 +1,51 @@
+@mixin modal-variant($background) {
+	.modal-title {
+		color: color-yiq($background);
+	}
+	.modal-header,
+	.modal-footer {
+		border-color: rgba($background, .075);
+	}
+	.modal-content {
+		background-color: $background;
+		color: color-yiq($background);
+
+		.heading {
+			color: color-yiq($background);
+		}
+	}
+
+	.close { 
+    	&>span:not(.sr-only) {
+    		color: $white;
+    	}
+    }
+}
+
+  
+  /* Media query for small screens (e.g., smartphones) */
+  @media screen and (max-width: 576px) {
+	.modal-content {
+	  width: 90%; /* Adjust width for small screens */
+	  margin-left: auto; /* Center the modal horizontally */
+	  margin-right: auto;
+	}
+  }
+  
+  /* Media query for medium screens (e.g., tablets) */
+  @media screen and (min-width: 700px) {
+	.modal-content {
+	  width: 120%; /* Adjust width for medium screens */
+	  margin-left: -20%; /* Center the modal horizontally */
+		
+	}
+  }
+  
+  /* Media query for large screens (e.g., desktops) */
+  @media screen and (min-width: 1100px) {
+	.modal-content {
+	  width: 200%; /* Adjust width for large screens */
+	  margin-left: -35%; /* Center the modal horizontally */
+	  
+	}
+  }

@@ -1,0 +1,11 @@
+----Projects
+Search funcitonality in Create project
+Fix Edit
+
+----Tasks
+
+// "start": "react-scripts start" ,
+    // "start": "webpack-dev-server --hot" ,
+    // "start": "react-scripts --openssl-legacy-provider start",
+
+use older react-redux version "react-redux": "^7.2.8",
