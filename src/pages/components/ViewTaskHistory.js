@@ -3,7 +3,7 @@ import { Breadcrumb, Col, Row, Form, Card, Button, Table, Container, InputGroup,
 import { faHome, faQuran, faTrash, faAngleLeft, faAngleRight, faEdit } from "@fortawesome/free-solid-svg-icons";
 import { ToastContainer, toast } from 'react-toastify';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {baseurl} from "../../../api";
+import {baseurl} from "../../api";
 import axios from "axios";
 
 const ViewTaskHistory = ({history,showModal1,setShowModal1}) => {

@@ -3,7 +3,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
-import {baseurl} from "../../api";
+import {baseurl} from "../api";
 
 const initialState = {
   taskhist: [],

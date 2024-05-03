@@ -7,7 +7,7 @@ import { Col, Row, Form, Card, Button, FormCheck, Container, InputGroup } from '
 import { Link } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify/dist/react-toastify.cjs.development';
 import axios from "axios";
-import {baseurl} from "../../../api";
+import {baseurl} from "../../api";
 import { Routes } from "../../routes";
 import BgImage from "../../assets/img/illustrations/signin.svg";
 

@@ -10,7 +10,7 @@ import { Routes } from "../routes";
 import { pageVisits, pageTraffic, pageRanking } from "../data/tables";
 import transactions from "../data/transactions";
 import commands from "../data/commands";
-import {baseurl} from "../../api";
+import {baseurl} from "../api";
 
 // 
 

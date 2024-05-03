@@ -1,5 +1,5 @@
 import AWS from 'aws-sdk'
-import { KeyId,AccessKey } from '../../api';
+import { KeyId,AccessKey } from '../api';
 const s3 = new AWS.S3({
   accessKeyId: KeyId,
   secretAccessKey: AccessKey,

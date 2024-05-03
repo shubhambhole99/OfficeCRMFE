@@ -10,7 +10,7 @@ import { PageVisitsTable } from "../../components/Tables";
 import { trafficShares, totalOrders } from "../../data/charts";
 import Navbar from "../../components/Navbar";
 import {check} from "../../checkloggedin"
-import {baseurl} from "../../../api";
+import {baseurl} from "../../api";
 
 
 // dasdas

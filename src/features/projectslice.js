@@ -2,7 +2,7 @@
 
 import { createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
-import {baseurl} from "../../api";
+import {baseurl} from "../api";
 
 const initialState = {
   projects: [],

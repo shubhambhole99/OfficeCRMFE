@@ -9,7 +9,7 @@ import axios from "axios";
 import { ToastContainer, toast } from 'react-toastify/dist/react-toastify.cjs.development';
 import 'react-toastify/dist/ReactToastify.css';
 import BgImage from "../../assets/img/illustrations/signin.svg";
-import {baseurl} from '../../../api';
+import {baseurl} from '../../api';
 import {check} from '../../checkloggedin'
 
 //absjdhasojh
