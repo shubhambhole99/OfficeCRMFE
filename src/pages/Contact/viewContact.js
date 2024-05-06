@@ -13,16 +13,12 @@ import { useHistory } from 'react-router-dom';
 import { check } from '../../checkloggedin';
 import Multiselect from "../../components/Multiselect";
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchAsyncData } from '../../features/userslice'
-import { deletetasks } from "../../features/taskslice";
-import {addtaskhistory} from "../../features/taskhistoryslice";
-import AddTaskHistory from "../components/AddTaskHistory";
-import ViewTaskHistory from "../components/ViewTaskHistory";
+import { fetchAsyncData } from '../../features/contactslice'
 
 export default () => {
   const [pname, setPname] = useState('');
   const [people, setPeople] = useState('');
-  const [pnamearr, setPnamearr] = useState([]);
+  let [pnamearr, setPnamearr] = useState([]);
   const [taskstatus, setTaskStatus] = useState('');
   const [data, setData] = useState([]);
   const [users, setUsers] = useState([]);
@@ -56,34 +52,36 @@ export default () => {
   const dispatch = useDispatch();
 
   // for users
-  const {user1,loading,error}=useSelector((state) => state.users);
+  const {contacts,loading,error}=useSelector((state) => state.contact);
  
-  useEffect(() => {
-    // console.log(user)
-    // (async () =>{
-    // const response = await axios.put(`${baseurl}/task/filter`, {
-    //   project:pname||undefined,
-    //   type:types||undefined
-    // });
-    // setData(response.data);
-    // dispatch(fetchAsyncData()).then(result=>{
-    //   setUsers(result);
-    // }).catch(err=>{
-    //   // console.log(err)
-    // })
-//   })()
-  dispatch(fetchAsyncData())
-  if(user1.length!=0){
-    // console.log("once")
-    setUsers(user1)
-  }
-  // setUsers(user1)
-  // console.log(loading)
+//   useEffect(() => {
+//     // console.log(contacts)
+//     // (async () =>{
+//     // const response = await axios.put(`${baseurl}/task/filter`, {
+//     //   project:pname||undefined,
+//     //   type:types||undefined
+//     // });
+//     // setData(response.data);
+//     // dispatch(fetchAsyncData()).then(result=>{
+//     //   setUsers(result);
+//     // }).catch(err=>{
+//     //   // console.log(err)
+//     // })
+// //   })()
+//   // dispatch(fetchAsyncData())
+//   if(contacts.length!=0){
+//     // console.log("once")
+//     // setUsers(user1)
+//   }
+//   // setUsers(user1)
+//   // console.log(loading)
+//   handleprojectFetch()
+//     // handleFetch()
+//   }, [contacts.length]);
+
+useEffect(()=>{
   handleprojectFetch()
-    // handleFetch()
-  }, [user1.length]);
-
-
+},[])
 
   const handleprojectFetch=async()=>{
     //console.log(companyname)
@@ -102,13 +100,20 @@ export default () => {
     });
 
   }
-  const findprojectname=(id)=>{
-    //console.log(id,pnamearr)
-    for(let i=0;i<pnamearr.length;i++){
-      if(pnamearr[i]._id===id){
-        return pnamearr[i].name
+  const findprojectname=(projects)=>{
+    // console.log(projects,"Find project name")
+    // console.log(pnamearr)
+    let str=""
+    for(let i=0;i<projects.length;i++){
+      console.log(projects[i])
+    for(let j=0;j<pnamearr.length;j++){
+      if(pnamearr[j]._id==projects[i]){
+        str=str+"{"+pnamearr[j].name+"}"
+        break
       }
     }
+  }
+    return str
   }
 
   const handleFetch = async (e) => {
@@ -118,10 +123,11 @@ export default () => {
         project:pname,
         type:type
     }
+    console.log(body)
     try {
       const response = await axios.put(`${baseurl}/contact/all`,body);
       setData(response.data);
-      // //console.log(response.data)
+      console.log(response.data)
 
     } catch (error) {
       //console.error(error);
@@ -365,26 +371,31 @@ export default () => {
                 <th scope="col">Name</th>
                 <th scope="col">Contact No</th>
                 <th scope="col">Email</th>
+                <th scope="col">Type</th>
                 <th scope="col">Description</th>
                 <th scope="col">Projects</th>
               </tr>
             </thead>
             <tbody>
-            {data.length === 0 ? (
+            {data.length == 0 ? (
                   <tr>
                     <td colSpan="6" className="text-center">loading...</td>
                   </tr>
                 ) : (
                   data.map((row, index) => {
-                    const projectName = findprojectname(row.projectid);
-                    return projectName ? (
+                    // if((row.projects).length!=0){
+                    return  (
                       <tr key={index}>
                         <td>{index + 1}</td>
-                        <td style={{ cursor: "pointer", whiteSpace: "pre-wrap" }} onClick={() => handletaskhistory(row)}>{projectName}</td>
-                        <td style={{ whiteSpace: "pre-wrap" }}>{row.taskSubject}</td>
-                        <td style={{ whiteSpace: "pre-wrap" }}><pre style={{ whiteSpace: "pre-wrap" }}>{row.taskDescription}</pre></td>
-                        <td>{getUsernameById(row.assignTaskTo)}</td>
-                        <td>
+                        <td style={{ cursor: "pointer", whiteSpace: "pre-wrap" }} onClick={() => handletaskhistory(row)}>{row.name}</td>
+                        <td style={{ whiteSpace: "pre-wrap" }}>{row.phone}</td>
+                        <td style={{ whiteSpace: "pre-wrap" }}><pre style={{ whiteSpace: "pre-wrap" }}>{row.email}</pre></td>
+                        <td style={{ whiteSpace: "pre-wrap" }}>{row.type}</td>
+                        <td style={{ whiteSpace: "pre-wrap" }}><pre style={{ whiteSpace: "pre-wrap" }}>{row.description}</pre></td>
+                        <td style={{ whiteSpace: "pre-wrap" }}><pre style={{ whiteSpace: "pre-wrap" }}>{findprojectname(row.projects)}</pre></td>
+
+                        {/* <td>{getUsernameById(row.assignTaskTo)}</td> */}
+                        {/* <td>
                           <Button style={{ backgroundColor: "aqua", color: "black" }} variant="info" size="sm" onClick={() => handleEditModal(row)}>
                             <FontAwesomeIcon icon={faEdit} />
                           </Button>
@@ -399,9 +410,10 @@ export default () => {
                             {row.taskCompleted ? "Mark incomplete" : "Mark complete"}
                           </Button>
                           
-                        </td>
+                        </td> */}
                       </tr>
-                    ) : null;
+                    )
+                  // }else{return null}
                   })
                 )}
 
@@ -459,10 +471,10 @@ export default () => {
           </Modal>
 
 
-  <ViewTaskHistory history={history} showModal1={showModal1} setShowModal1={setShowModal1}/>
-{/* add history */}
+  {/* <ViewTaskHistory history={history} showModal1={showModal1} setShowModal1={setShowModal1}/>
+add history */}
 
-  <AddTaskHistory taskid={taskid} showModal2={showModal2} setShowModal2={setShowModal2}/>
+  {/* <AddTaskHistory taskid={taskid} showModal2={showModal2} setShowModal2={setShowModal2}/> */}
   
 
     </>
