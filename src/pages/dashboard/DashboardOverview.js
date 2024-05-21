@@ -24,24 +24,24 @@ export default () => {
  
   useEffect(() => {    
     //Fetching incomplete tasks
-    console.log(check()[0]);
+    //////console.log(check()[0]);
 
     axios.get(`${baseurl}/task/incomplete/${check()[0]}`)
     .then(response => {
-      console.log(response.data,"from dashboard overview");
+      ////////console.log(response.data,"from dashboard overview");
       setincompletedTasks(response.data);
     })
     .catch(error => {
-      //console.log(error);
+      //////////console.log(error);
     }); 
    //Fetching complete tasks
    axios.get(`${baseurl}/task/complete/${check()[0]}`)
    .then(response => {
-     console.log(response.data,"from dashboard overview");
+     ////////console.log(response.data,"from dashboard overview");
      setcompletedTasks(response.data);
    })
    .catch(error => {
-     //console.log(error);
+     //////////console.log(error);
    }); 
 
    }, []);
@@ -49,21 +49,21 @@ export default () => {
    //  Mark incomeplete-->Complete or complete-->incomeplete
    const handleComplete=(id,taskCompleted)=>{
     axios.put(`${baseurl}/task/complete/${id}`).then(response => {
-      //console.log(response.data,completedtasks,taskCompleted,response.data.task);
+      //////////console.log(response.data,completedtasks,taskCompleted,response.data.task);
       if(taskCompleted){
         setincompletedTasks([...incompletedtasks,response.data.task]);
         setcompletedTasks(completedtasks.filter(task => task._id !== id));
-        //console.log(completedtasks,incompletedtasks,"previously completed",taskCompleted);
+        //////////console.log(completedtasks,incompletedtasks,"previously completed",taskCompleted);
       }
       else{
         setcompletedTasks([...completedtasks, response.data.task]);
         setincompletedTasks(incompletedtasks.filter(task => task._id !== id));
-        //console.log(completedtasks,incompletedtasks,"previously incomplet",taskCompleted);
+        //////////console.log(completedtasks,incompletedtasks,"previously incomplet",taskCompleted);
       }
-      //console.log(response.data);
+      //////////console.log(response.data);
     })
     .catch(error => {
-      //console.log(error);
+      //////////console.log(error);
     }); 
    }
   

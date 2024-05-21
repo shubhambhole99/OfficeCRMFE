@@ -31,16 +31,16 @@ export default () => {
         email: email,
         password: password,
       };
-      //console.log(body)
+      //////////console.log(body)
       
       const responseFormData = await axios.post(`${baseurl}/user/create`,body);
-      //console.log(responseFormData);
+      //////////console.log(responseFormData);
       toast.success('User registered');
       setEmail('')
       setUsername('')
       setPassword('')
     } catch (error) {
-      //console.log(error);
+      //////////console.log(error);
       toast.error('User Already Exists');
       
     }

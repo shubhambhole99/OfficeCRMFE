@@ -6,7 +6,7 @@ export default ({options,selectedValues,setSelectedValues,tag}) => {
   const [selectedValue, setSelectedValue] = useState(null);
 
 tag=tag?tag:'People'
-console.log(options,tag)
+////////console.log(tag,selectedValues)
 
 
   const handleChange = (e) => {

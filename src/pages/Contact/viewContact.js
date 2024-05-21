@@ -13,7 +13,7 @@ import { useHistory } from 'react-router-dom';
 import { check } from '../../checkloggedin';
 import Multiselect from "../../components/Multiselect";
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchAsyncData } from '../../features/contactslice'
+import { fetchAsyncData,deleteContact } from '../../features/contactslice'
 
 export default () => {
   const [pname, setPname] = useState('');
@@ -35,6 +35,15 @@ export default () => {
   const [editMode,setEditMode]=useState(false);
   const [showModal,setShowModal]=useState(false);
 
+  // Name
+  const [editconid,setEditconid]=useState("")
+  const [editName,setEditname]=useState("")
+  const [editphone,setEditphone]=useState("")
+  const [editemail,setEditemail]=useState("")
+  const [edittype,setEdittype]=useState("")
+  const [editDescription,setEditdescription]=useState("")
+  let [editprojects,setEditProjects]=useState([])
+  
   // project filtering
   let [companyname,setCompanyName]=useState('')
   let [isActive,setIsActive]=useState(null)
@@ -55,7 +64,7 @@ export default () => {
   const {contacts,loading,error}=useSelector((state) => state.contact);
  
 //   useEffect(() => {
-//     // console.log(contacts)
+//     // ////////console.log(contacts)
 //     // (async () =>{
 //     // const response = await axios.put(`${baseurl}/task/filter`, {
 //     //   project:pname||undefined,
@@ -65,35 +74,36 @@ export default () => {
 //     // dispatch(fetchAsyncData()).then(result=>{
 //     //   setUsers(result);
 //     // }).catch(err=>{
-//     //   // console.log(err)
+//     //   // ////////console.log(err)
 //     // })
 // //   })()
 //   // dispatch(fetchAsyncData())
 //   if(contacts.length!=0){
-//     // console.log("once")
+//     // ////////console.log("once")
 //     // setUsers(user1)
 //   }
 //   // setUsers(user1)
-//   // console.log(loading)
+//   // ////////console.log(loading)
 //   handleprojectFetch()
 //     // handleFetch()
 //   }, [contacts.length]);
 
 useEffect(()=>{
   handleprojectFetch()
+  handleFetch()
 },[])
 
   const handleprojectFetch=async()=>{
-    //console.log(companyname)
+    //////////console.log(companyname)
     let body={
       company:companyname?companyname:null,
       status:isActive?isActive:null
     }
-    //console.log(body)
+    //////////console.log(body)
     await axios.put(`${baseurl}/project/`,body)
     .then(response => {
       setPnamearr(response.data);
-      // //console.log(response.data)
+      // //////////console.log(response.data)
     })
     .catch(error => {
       //console.error(error);
@@ -101,11 +111,11 @@ useEffect(()=>{
 
   }
   const findprojectname=(projects)=>{
-    // console.log(projects,"Find project name")
-    // console.log(pnamearr)
+    // ////////console.log(projects,"Find project name")
+    // ////////console.log(pnamearr)
     let str=""
     for(let i=0;i<projects.length;i++){
-      console.log(projects[i])
+      ////////console.log(projects[i])
     for(let j=0;j<pnamearr.length;j++){
       if(pnamearr[j]._id==projects[i]){
         str=str+"{"+pnamearr[j].name+"}"
@@ -117,112 +127,84 @@ useEffect(()=>{
   }
 
   const handleFetch = async (e) => {
+    if(e){
     e.preventDefault()
-    console.log("hello")
+    }
+    ////////console.log("hello")
     const body={
         project:pname,
         type:type
     }
-    console.log(body)
+    ////////console.log(body)
     try {
       const response = await axios.put(`${baseurl}/contact/all`,body);
       setData(response.data);
-      console.log(response.data)
+      ////////console.log(response.data)
 
     } catch (error) {
       //console.error(error);
     }
   };
 
-  const getUsernameById = (assignTaskTo) => {
-    let str = "";
-    for (let i = 0; i < assignTaskTo.length; i++) {
-      for (let j = 0; j < users.length; j++) {
-        if (users[j]._id === assignTaskTo[i]) {
-          str = str + users[j].username + " ";
-          break;
-        }
-      }
-    }
-    return str;
-  };
 
-
-  const handleComplete = (id) => {
-    // Find the task with the given id and toggle its completion status locally
-    const updatedData = data.map(item => {
-      if (item._id === id) {
-        return { ...item, taskCompleted: !item.taskCompleted };
-      }
-      return item;
-    });
-  
-    // Update the state with the modified data
-    setData(updatedData);
-  
-    // Make the PUT request to update the task completion status on the server
-    axios.put(`${baseurl}/task/complete/${id}`)
-      .then(response => {
-        // Handle success response if needed
-      })
-      .catch(error => {
-        // If the request fails, revert the local state change
-        //console.error(error);
-        setData(data); // Revert back to the original data
-      });
-  };
   const handleEditModal = (item) => {
-    //console.log(item)
+    ////////console.log(pnamearr)
     let temp=[]
-    let tempuser=item.assignTaskTo
-    for(let j=0;j<users.length;j++){
-      if((tempuser).includes(users[j]._id)){
+    let temppro=item.projects
+    ////////console.log(temppro,pnamearr)
+    for(let j=0;j<pnamearr.length;j++){
+      if((temppro).includes(pnamearr[j]._id)){
         temp.push({
-          id:users[j]._id,
-          name:users[j].username,
+          id:pnamearr[j]._id,
+          name:pnamearr[j].name,
         })
       }
     }
-    //console.log(temp,"hi")
-  seteditTaskid(item._id)
-  setEditassignTaskTo(temp)
-  setEditprojectname(item.projectid)
-  setEdittaskDescription(item.taskDescription)
-  setEdittaskSubject(item.taskSubject)
+    ////////console.log(temp,"hi")
+  setEditconid(item._id)
+  setEditProjects(temp)
+  setEditname(item.name)
+  setEditemail(item.email)
+  setEditphone(item.phone)
+  setEdittype(item.type)
+  setEditdescription(item.description)
   setShowModal(true);
   setEditMode(true); // Set editMode to true when opening the edit modal
   }
 
   const handleEditSubmit=async()=>{
-    //console.log(taskid,"chekcing task id")
+    //////////console.log(taskid,"chekcing task id")
     const token = localStorage.getItem('token');
     let temp=[]
-    for(let i=0;i<editassignTaskTo.length;i++){
-      temp.push(editassignTaskTo[i].id)
+    for(let i=0;i<editprojects.length;i++){
+      temp.push(editprojects[i].id)
     }
     const editData = {
-      assignTaskTo: temp,
-      projectid: editprojectname,
-      taskDescription: edittaskDescription,
-      taskSubject: edittaskSubject
+      name:editName,
+      phone: editphone,
+      email: editemail,
+      type: edittype,
+      description: editDescription,
+      projects:temp
     };
-    //console.log(editData)
+    //////console.log(editData)
 
     try {
-      const response = await axios.put(`${baseurl}/task/${taskid}`, editData, {
+      const response = await axios.put(`${baseurl}/contact/${editconid}`, editData, {
         headers: {
           Authorization: `Bearer ${token}`
         }
       });
-      //console.log(response.data);
+      //////console.log(response.data);
       toast.success("Task updated successfully");
       setShowModal(false);
       setEditMode(false);
-      seteditTaskid("")
-      setEditassignTaskTo([])
-      setEditprojectname("")
-      setEdittaskDescription("")
-      setEdittaskSubject("")
+      setEditProjects([])
+      setEditname("")
+      setEditemail("")
+      setEditphone("")
+      setEdittype("")
+      setEditdescription("")
     } catch (error) {
       //console.error(error);
       toast.error("Failed to update task");
@@ -230,7 +212,7 @@ useEffect(()=>{
   }
 
   const handletaskhistory=async (row)=>{
-    //console.log("hi")
+    //////////console.log("hi")
     try{
       // fetching all Histories of one task
       let response=await axios.get(`${baseurl}/history/${row._id}`)
@@ -239,13 +221,13 @@ useEffect(()=>{
       for(let i=0;i<response.data.length;i++){
       let res=await axios.get(`${baseurl}/history/single/${(response.data)[i]._id}`)
       temp.push(res.data)
-      //console.log(temp)
+      //////////console.log(temp)
       }
       setHistory(temp)
       
    
     }catch(error){
-      //console.log(error)
+      //////////console.log(error)
     }
    
     
@@ -253,13 +235,21 @@ useEffect(()=>{
     settaskthis(true)
   }
 
-  const handleaddhistory=async (row)=>{
-    // console.log(row._id)
-    seteditTaskid(row._id)
-    setShowModal2(true)
-    // dispatch(addtaskhistory("hi"))
-    
+
+
+  const handleDelete =(data)=>{
+    if(dispatch(deleteContact(data))){
+      toast.success("Deleted Succesfully")
+      setTimeout(()=>{
+        handleFetch()
+      },1000)
+
+    }
+    else{
+      toast.error("Not Deleted")
+    }
   }
+  
   
   
   
@@ -268,6 +258,7 @@ useEffect(()=>{
   
   return (
     <>
+    <ToastContainer/>
       <form onSubmit={(e)=>handleFetch(e)}>
         <Row>
           <Col xs={12} md={4}>
@@ -282,6 +273,7 @@ useEffect(()=>{
                   <option value="">Select Option</option>       
                   <option value="Neo">Neo Modern</option>
                   <option value="BZ">BZ Consultants</option>
+                  <option value="PMC">PMC</option>
                 </Form.Select>
               </InputGroup>
             </Form.Group>
@@ -374,6 +366,7 @@ useEffect(()=>{
                 <th scope="col">Type</th>
                 <th scope="col">Description</th>
                 <th scope="col">Projects</th>
+                <th scope="col">actions</th>
               </tr>
             </thead>
             <tbody>
@@ -391,26 +384,18 @@ useEffect(()=>{
                         <td style={{ whiteSpace: "pre-wrap" }}>{row.phone}</td>
                         <td style={{ whiteSpace: "pre-wrap" }}><pre style={{ whiteSpace: "pre-wrap" }}>{row.email}</pre></td>
                         <td style={{ whiteSpace: "pre-wrap" }}>{row.type}</td>
-                        <td style={{ whiteSpace: "pre-wrap" }}><pre style={{ whiteSpace: "pre-wrap" }}>{row.description}</pre></td>
-                        <td style={{ whiteSpace: "pre-wrap" }}><pre style={{ whiteSpace: "pre-wrap" }}>{findprojectname(row.projects)}</pre></td>
+                        <td ><pre style={{ whiteSpace: "pre-wrap" }}>{row.description}</pre></td>
+                        <td style={{ width:"60%" }}><pre style={{ whiteSpace: "pre-wrap" }}>{findprojectname(row.projects)}</pre></td>
 
                         {/* <td>{getUsernameById(row.assignTaskTo)}</td> */}
-                        {/* <td>
+                        <td>
                           <Button style={{ backgroundColor: "aqua", color: "black" }} variant="info" size="sm" onClick={() => handleEditModal(row)}>
                             <FontAwesomeIcon icon={faEdit} />
                           </Button>
-                          <Button style={{ borderColor:"black",backgroundColor: "aqua", color: "black",marginLeft: "2%" }} onClick={() => dispatch(deletetasks(row._id))} variant="danger" size="sm">
+                          <Button style={{ borderColor:"black",backgroundColor: "aqua", color: "black",marginLeft: "2%" }} onClick={() => handleDelete(row._id)} variant="danger" size="sm">
                                   <FontAwesomeIcon icon={faTrash} />
-                              </Button>
-                          <Button style={{ backgroundColor: "aqua", color: "black", marginLeft: "2%" }} onClick={() => handleaddhistory(row)}>Add</Button>
-                          <Button
-                            style={{ backgroundColor: "aqua", color: "black", marginLeft: "2%" }}
-                            onClick={() => handleComplete(row._id)}
-                          >
-                            {row.taskCompleted ? "Mark incomplete" : "Mark complete"}
-                          </Button>
-                          
-                        </td> */}
+                              </Button> 
+                        </td>
                       </tr>
                     )
                   // }else{return null}
@@ -427,38 +412,41 @@ useEffect(()=>{
 {/* edit modal */}
 <Modal show={showModal && editMode} onHide={() => setEditMode(false)}>
                         <Modal.Header>
-                          <Modal.Title>Edit Tasks</Modal.Title>
+                          <Modal.Title>Edit Contact</Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
                        
                           <Form.Group className="mb-3" controlId="editDescription">
-                              <Form.Label>Project name</Form.Label>
-                    <Form.Select required value={editprojectname} onChange={(e) => setEditprojectname(e.target.value)}>
+                              <Form.Label>Name</Form.Label>
+                              <Form.Control type="text" value={editName} onChange={(e) => setEditname(e.target.value)} />
+                          </Form.Group>
+                          <Form.Group className="mb-3" controlId="editDescription">
+                              <Form.Label>Contact No</Form.Label>
+                              <Form.Control type="text" value={editphone} onChange={(e) => setEditphone(e.target.value)} />
+                          </Form.Group>
+                          <Form.Group className="mb-3" controlId="editDescription">
+                              <Form.Label>Email</Form.Label>
+                              <Form.Control type="text" value={editemail} onChange={(e) => setEditemail(e.target.value)} />
+                          </Form.Group>
+                          <Form.Group className="mb-3" controlId="editDescription">
+                              <Form.Label>Types</Form.Label>
+                    <Form.Select required value={edittype} onChange={(e) => setEdittype(e.target.value)}>
                           <option value="">Select Option</option>
-                           
-                            {pnamearr.map((option, index) => (
-                              <option key={index} value={option._id}>{option.name}</option>
+                            {types.map((option, index) => (
+                              <option key={index} value={option}>{option}</option>
                             ))}
                           </Form.Select>
                           </Form.Group>
+                          
+                          
                           <Form.Group className="mb-3" controlId="editHeading">
                               <Form.Label>Task Description</Form.Label>
-                              <textarea rows="4" cols="50" type="text" value={edittaskDescription} onChange={(e) => setEdittaskDescription(e.target.value)} />
                           </Form.Group>
-                          <Form.Group className="mb-3" controlId="editHeading">
-                              <Form.Label>Task Subject</Form.Label>
-                              <Form.Control type="text" value={edittaskSubject} onChange={(e) => setEdittaskSubject(e.target.value)} />
-                          </Form.Group>
+                          <textarea rows="4" cols="50" type="text" value={editDescription} onChange={(e) => setEditdescription(e.target.value)} />
+                          <Multiselect tag="Projects" options={pnamearr} selectedValues={editprojects} setSelectedValues={setEditProjects}/>
+
                           
-                              {/* People */}
-                            <Form.Group className="mb-3" controlId="editIsActive">
-                            {users?(<Multiselect 
-                          selectedValues={editassignTaskTo} 
-                          setSelectedValues={setEditassignTaskTo} 
-                          options={users}/>):(
-                            <p>loading</p>
-                            )}
-                              </Form.Group>
+                          
                           </Modal.Body>
                           <Modal.Footer>
                           <Button variant="secondary" onClick={() => setEditMode(false)}>

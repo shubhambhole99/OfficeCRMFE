@@ -116,7 +116,17 @@ export const Routes = {
     // Added Later
     // Correspondence
     CreateNode:{path:"/correspondence/create"},
-    ViewLetter:{path:"/correspondence/view"}
+    ViewLetter:{path:"/correspondence/view"},
+
+
+    // Finance
+    CreateInvoice:{path:'/billing/createinvoice'},
+    viewBills:{path:'/billing/viewBills'},
+    
+
+    // Credit
+    CreateCredit:{path:'/billing/createBill'},
+
 
     
 };

@@ -58,7 +58,7 @@ const [showModal1,setShowModal1]=useState(false);
    axios.put(`${baseurl}/project/`)
     .then(response => {
       setPnamearr(response.data);
-      // //console.log(response.data)
+      // //////////console.log(response.data)
     })
     .catch(error => {
       //console.error(error);
@@ -66,7 +66,7 @@ const [showModal1,setShowModal1]=useState(false);
     },[])
 
     const findprojectname=(id)=>{
-      //console.log(id,pnamearr)
+      //////////console.log(id,pnamearr)
       for(let i=0;i<pnamearr.length;i++){
         if(pnamearr[i]._id===id){
           return pnamearr[i].name
@@ -76,7 +76,7 @@ const [showModal1,setShowModal1]=useState(false);
 
 
  const handletaskhistory=async (row)=>{
-    //console.log("hi")
+    //////////console.log("hi")
     try{
       // fetching all Histories of one task
       let response=await axios.get(`${baseurl}/history/${row._id}`)
@@ -85,13 +85,13 @@ const [showModal1,setShowModal1]=useState(false);
       for(let i=0;i<response.data.length;i++){
       let res=await axios.get(`${baseurl}/history/single/${(response.data)[i]._id}`)
       temp.push(res.data)
-      //console.log(temp)
+      //////////console.log(temp)
       }
       setHistory(temp)
       
    
     }catch(error){
-      //console.log(error)
+      //////////console.log(error)
     }
    
     
@@ -100,19 +100,19 @@ const [showModal1,setShowModal1]=useState(false);
   }
 
   const handleaddtaskhistory=async (row)=>{
-    //console.log(row._id)
+    //////////console.log(row._id)
     seteditTaskid(row._id)
     setShowModal2(true)
     
   }
 
   const handleaddhistorysubmit=async(row)=>{
-    //console.log(texthistory)
+    //////////console.log(texthistory)
     const token = localStorage.getItem('token');
     const editData = {
       taskDescription: texthistory,
     };
-    //console.log(editData)
+    //////////console.log(editData)
 
     try {
       const response = await axios.post(`${baseurl}/history/create/${taskid}`, editData, {
@@ -120,7 +120,7 @@ const [showModal1,setShowModal1]=useState(false);
           Authorization: `Bearer ${token}`
         }
       });
-      //console.log(response.data);
+      //////////console.log(response.data);
       // toast.success("History added successfully");
       setShowModal2(false);
       setaddtexthistory("")
@@ -178,7 +178,7 @@ const [showModal1,setShowModal1]=useState(false);
   const TableRow1 = ({ data,hello }) => {
     // Format the CreatedAt date
     const formattedDate = new Date(data.CreatedAt).toLocaleDateString('en-GB');
-    // //console.log(data)
+    // //////////console.log(data)
     return (
       
       <tr style={{ maxWidth: "100px", cursor: "pointer",whiteSpace:"pre-wrap" }}>

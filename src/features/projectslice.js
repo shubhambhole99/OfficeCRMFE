@@ -19,7 +19,7 @@ const datasSlice = createSlice({
       state.error = null;
     },
     fetchDataSuccess(state, action) {
-        console.log("state,action")
+        ////////console.log("state,action")
       state.projects = action.payload;
       state.loading = false;
     },
@@ -35,7 +35,7 @@ export const { fetchDataStart, fetchDataSuccess, fetchDataFailure } = datasSlice
 export const fetchAsyncData = () => async (dispatch) => {
   dispatch(fetchDataStart());
   try {
-    const response = await axios.get(`${baseurl}/user`);
+    const response = await axios.put(`${baseurl}/project/`);
     dispatch(fetchDataSuccess(response.data));
   } catch (error) {
     dispatch(fetchDataFailure(error.message));

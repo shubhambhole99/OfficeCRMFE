@@ -20,7 +20,7 @@ const dataSlice = createSlice({
       state.error = null;
     },
     fetchDataSuccess(state, action) {
-        console.log("state,action")
+        ////////console.log("state,action")
       state.taskhist = action.payload;
       state.loading = false;
     },
@@ -34,13 +34,13 @@ const dataSlice = createSlice({
 export const { fetchDataStart, fetchDataSuccess, fetchDataFailure } = dataSlice.actions;
 
 export const addtaskhistory = (data) => async (dispatch) => {
-console.log(data)
+////////console.log(data)
 toast.success("History added successfully");
 //   const token = localStorage.getItem('token');
 //     const editData = {
 //       taskDescription: texthistory,
 //     };
-//     //console.log(editData)
+//     //////////console.log(editData)
 
 //     try {
 //       const response = await axios.post(`${baseurl}/history/create/${taskid}`, editData, {
@@ -48,7 +48,7 @@ toast.success("History added successfully");
 //           Authorization: `Bearer ${token}`
 //         }
 //       });
-//       //console.log(response.data);
+//       //////////console.log(response.data);
 //       toast.success("History added successfully");
 //       dispatch(fetchDataSuccess(response.data));
 //       setShowModal2(false);

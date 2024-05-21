@@ -1,11 +1,11 @@
-// dataSlice.js
+
 
 import { createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 import {baseurl} from "../api";
 
-const initialState = {
-  user1: [],
+let initialState = {
+  bills: [],
   loading: false,
   error: null
 };
@@ -20,7 +20,7 @@ const datasSlice = createSlice({
     },
     fetchDataSuccess(state, action) {
         // ////////console.log(action.payload)
-      state.user1 = action.payload;
+      state.bills = action.payload;
       state.loading = false;
     },
     fetchDataFailure(state, action) {
@@ -32,14 +32,19 @@ const datasSlice = createSlice({
 
 export const { fetchDataStart, fetchDataSuccess, fetchDataFailure } = datasSlice.actions;
 
-export const fetchAsyncData = () => async (dispatch) => {
+export const getbill = (body) => async (dispatch) => {
   dispatch(fetchDataStart());
   try {
+    ////console.log(body)
 
-    const response = await axios.get(`${baseurl}/user`);
-    // ////////console.log(response.data)
-    dispatch(fetchDataSuccess(response.data));
-    return response.data;
+    const response = await axios.put(`${baseurl}/income/`);
+    ////console.log(response.data,"billlllllllllllllllllllllllls")
+    // initialState.bills=response.data.data
+    dispatch(fetchDataSuccess(response.data.data));
+    // resolve(response.data.data)
+   
+    return response.data.data
+    
   } catch (error) {
     ////////console.log(error)
     dispatch(fetchDataFailure(error.message));

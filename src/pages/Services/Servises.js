@@ -79,7 +79,7 @@ export default () => {
         setData(response.data);
       })
       .catch(error => {
-        //console.log(error);
+        //////////console.log(error);
       });
   }, [currentPage, itemsPerPage]);
 
@@ -111,7 +111,7 @@ export default () => {
   }
 
   const handleEditModal = (row) => {
-    //console.log(row);
+    //////////console.log(row);
     setEditItemId(row._id);
     setEditHeading(row.heading);
     setEditContent(row.content);

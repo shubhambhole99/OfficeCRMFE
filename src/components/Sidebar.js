@@ -23,7 +23,7 @@ export default (props = {}) => {
   const showClass = show ? "show" : "";
   let history = useHistory();
   const permission=check()[3]
-  //console.log(permission,"object")
+  //////////console.log(permission,"object")
 
   const onCollapse = () => setShow(!show);
 
@@ -136,6 +136,19 @@ export default (props = {}) => {
               {/* <NavItem title="Testimonial" link={Routes.Testimonial.path} /> */}
               </CollapsableNavItem>
 
+              
+              <CollapsableNavItem eventKey="examples/" title="Billing" icon={faFileAlt}>
+
+
+              <NavItem title="Create Invoice" link={Routes.CreateInvoice.path} icon={faInfo}/>
+              <NavItem title="Create Credit" link={Routes.CreateCredit.path} icon={faInfo}/>
+              <NavItem title="View Bills" link={Routes.viewBills.path} icon={faInfo}/>
+              {/* <NavItem title="Testimonial" link={Routes.Testimonial.path} /> */}
+              </CollapsableNavItem>
+
+
+
+              
 
 
               <CollapsableNavItem eventKey="examples/" title="Correspondence" icon={faBook}>

@@ -14,7 +14,7 @@ const check=()=>{
       const userId = payload.userId;
       const username = payload.username;
       const role=payload.role
-      //console.log(role)
+      //////////console.log(role)
       const userPermissions = {
         canViewProjects: true,
         canCreateTasks: true,
@@ -26,13 +26,13 @@ const check=()=>{
         canViewTasks: true, // Example of a permission that the user doesn't have
       };
       const permission=role=='user'?userPermissions:adminPermissions
-      //console.log(userId)
+      //////////console.log(userId)
       // You can use the extracted details as needed
       return [userId,username,role,permission]
-      //console.log("User ID:", userId);
-      //console.log("Username:", username);
+      //////////console.log("User ID:", userId);
+      //////////console.log("Username:", username);
     } else {
-      //console.log("Token not found in local storage");
+      //////////console.log("Token not found in local storage");
     }
 
 }

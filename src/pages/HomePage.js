@@ -58,7 +58,15 @@ import Contact from './Contact/Contact';
 import viewContact from './Contact/viewContact';
 import Uploadblog from './Blog/Uploadblog';
 import Servises from './Services/Servises';
+// Invoices
+import CreateInvoice from './Billing/createBills'
+import viewBills from './Billing/viewBills'
+
+// Credit
+import CreateCredit from './Billing/createCredit'
+
 import {hot} from 'react-hot-loader/root';
+
 
 // Create Correspondence
 import CreateCorrespondence from './correspondence/CreateCorrespondence'
@@ -177,6 +185,11 @@ const Homepage= () => (
 
     {/* Correspondence */}
     <RouteWithSidebar exact path={Routes.CreateNode.path} component={CreateCorrespondence} />
+
+    {/* Invoices */}
+    <RouteWithSidebar exact path={Routes.CreateInvoice.path} component={CreateInvoice} />
+    <RouteWithSidebar exact path={Routes.CreateCredit.path} component={CreateCredit}/>
+    <RouteWithSidebar exact path={Routes.viewBills.path} component={viewBills} />
 
     <Redirect to={Routes.Signin.path} />
     {/* <Redirect to={Routes.DashboardOverview.path} /> */}

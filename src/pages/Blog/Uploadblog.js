@@ -47,7 +47,7 @@ export default () => {
                     Authorization: `${token}`
                 }
             });
-            //console.log(response);
+            //////////console.log(response);
             toast.success('Data added successfully');
             // Clear form data after submission
             clearFormData();
@@ -69,11 +69,11 @@ export default () => {
     useEffect(() => {
         axios.get(`https://ab.execute-api.ap-south-1.amazonaws.com/production/api/blog?page=${currentPage}&perPage=${itemsPerPage}`)
             .then(response => {
-                //console.log(response.data);
+                //////////console.log(response.data);
                 setData(response.data);
             })
             .catch(error => {
-                //console.log(error);
+                //////////console.log(error);
             });
     }, [currentPage, itemsPerPage]);
 
@@ -85,7 +85,7 @@ export default () => {
             }
         })
             .then(response => {
-                //console.log('Record deleted successfully:', response.data);
+                //////////console.log('Record deleted successfully:', response.data);
                 setData(prevData => prevData.filter(item => item.id !== id));
                 toast.success('Record deleted successfully');
             })
@@ -131,7 +131,7 @@ export default () => {
                     Authorization: `${token}`
                 }
             });
-            //console.log('Updated data:', response.data);
+            //////////console.log('Updated data:', response.data);
             toast.success('Data updated successfully');
             setShowModal(false);
             setData(prevData => prevData.map(item => item._id === editItemId ? { ...item, ...editData } : item));

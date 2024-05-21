@@ -2,6 +2,8 @@
 
 import { createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
+
 import {baseurl} from "../api";
 
 const initialState = {
@@ -11,7 +13,7 @@ const initialState = {
 };
 
 const datasSlice = createSlice({
-  name: 'projects',
+  name: 'contacts',
   initialState,
   reducers: {
     fetchDataStart(state) {
@@ -19,7 +21,7 @@ const datasSlice = createSlice({
       state.error = null;
     },
     fetchDataSuccess(state, action) {
-        console.log("state,action")
+        ////////console.log("state,action")
       state.contacts = action.payload;
       state.loading = false;
     },
@@ -32,16 +34,57 @@ const datasSlice = createSlice({
 
 export const { fetchDataStart, fetchDataSuccess, fetchDataFailure } = datasSlice.actions;
 
-export const fetchAsyncData = () => async (dispatch) => {
+export const getcontacts = () => async (dispatch) => {
   dispatch(fetchDataStart());
   try {
-    const response = await axios.get(`${baseurl}/user`);
-    console.log(response.data)
-    dispatch(fetchDataSuccess(response.data));
+    const response = await axios.put(`${baseurl}/contact/all`);
+    const sortedData = (response.data).sort((a, b) => a.name.localeCompare(b.name));
+
+
+    dispatch(fetchDataSuccess(sortedData));
   } catch (error) {
     dispatch(fetchDataFailure(error.message));
   }
 };
+
+export const deleteContact = (data) => async (dispatch) => {
+  dispatch(fetchDataStart());
+  try {
+    const token = localStorage.getItem('token');
+    //////console.log(data)
+    const response = await axios.delete(`${baseurl}/contact/${data}`,{
+      headers: {
+        Authorization: `${token}`
+      }});
+     return true;
+    dispatch(fetchDataSuccess(response.data));
+  } catch (error) {
+    return false
+    dispatch(fetchDataFailure(error.message));
+  }
+};
+
+// export const getcontact=(data)=>async(dispatch)=>{
+
+//     ////////console.log("hello")
+//     const body={
+//         project:undefined,
+//         type:undefined
+//     }
+//     ////////console.log(body)
+//     try {
+//       const response = await axios.put(`${baseurl}/contact/all`,body);
+//       // setData(response.data);
+//       // //////console.log(response.data)
+//       // initialState.contacts=response.data
+//       dispatch(fetchDataSuccess(response.data));
+//       // //////console.log("hi")
+
+//     } catch (error) {
+//       //console.error(error);
+//     }
+
+// }
 
 export default datasSlice.reducer;
 

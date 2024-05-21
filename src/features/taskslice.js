@@ -3,6 +3,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 import {baseurl} from "../api";
+import { ToastContainer, toast } from 'react-toastify';
+
 
 const initialState = {
   data: [],
@@ -19,7 +21,7 @@ const dataSlice = createSlice({
       state.error = null;
     },
     fetchDataSuccess(state, action) {
-        console.log("state,action")
+        ////////console.log("state,action")
       state.data = action.payload;
       state.loading = false;
     },
@@ -33,12 +35,20 @@ const dataSlice = createSlice({
 export const { fetchDataStart, fetchDataSuccess, fetchDataFailure } = dataSlice.actions;
 
 export const deletetasks = (data) => async (dispatch) => {
-console.log(data)
+////////console.log(data)
   dispatch(fetchDataStart());
   try {
-    const response = await axios.delete(`${baseurl}/task/${data}`);
+    const token = localStorage.getItem('token');
+    // //////console.log(token)
+    const response = await axios.delete(`${baseurl}/task/${data}`,{
+      headers: {
+        Authorization: `${token}`
+      }});
+      toast.success("Successfully Deleted")
     dispatch(fetchDataSuccess(response.data));
   } catch (error) {
+    toast.error("Error")
+
     dispatch(fetchDataFailure(error.message));
   }
 };

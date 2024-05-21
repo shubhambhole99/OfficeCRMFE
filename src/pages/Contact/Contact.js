@@ -14,10 +14,10 @@ import Multiselect from "../../components/Multiselect";
 
 export default () => {
 
-  const [name,setName]=useState('ab')
-  const [phone, setPhone] = useState('123');
-  const [email, setEmail] = useState('ab@gmail.com');
-  const [message, setMessage] = useState('dasdas');
+  const [name,setName]=useState('')
+  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
+  const [message, setMessage] = useState('');
   const [projects,setprojects]=useState([])
   const [type,setType]=useState('')
 
@@ -98,9 +98,14 @@ export default () => {
         description: message,
         projects:ids,
       };
-      console.log(body)
+      ////////console.log(body)
      const response = await axios.post(`${baseurl}/contact/create`, body);
-     console.log(response.data)
+     ////////console.log(response.data)
+     setName('')
+     setPhone('');
+     setEmail('');
+    setMessage('');
+    setprojects([])
       toast.success('Contact added successfully'); 
     } catch (error) {
       console.error(error);
@@ -113,16 +118,16 @@ export default () => {
   ////////////////////////////////////////////
 
   const handleprojectFetch=async()=>{
-    //console.log(companyname)
+    //////////console.log(companyname)
     let body={
       company:companyname?companyname:null,
       status:isActive?isActive:null
     }
-    //console.log(body)
+    //////////console.log(body)
     await axios.put(`${baseurl}/project/`,body)
     .then(response => {
       setPnamearr(response.data);
-      // console.log(response.data)
+      // ////////console.log(response.data)
     })
     .catch(error => {
       //console.error(error);
@@ -133,7 +138,7 @@ export default () => {
 
   //For Fetching Users and Projects
   useEffect(() => {
-   //console.log(check())
+   //////////console.log(check())
    axios.get(`${baseurl}/user`)
    .then(response => {
      setUsers(response.data);
@@ -144,7 +149,7 @@ export default () => {
     
 
       handleprojectFetch()
-      console.log(pnamearr)
+      ////////console.log(pnamearr)
   }, []);
 
  
@@ -169,7 +174,7 @@ export default () => {
       }
     })
       .then(response => {
-        //console.log('Record deleted successfully:', response.data);
+        //////////console.log('Record deleted successfully:', response.data);
         setData(prevData => prevData.filter(item => item.id !== id));
         toast.success('Record deleted successfully'); // Display success toast
       })

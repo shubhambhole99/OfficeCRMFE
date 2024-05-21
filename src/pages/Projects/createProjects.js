@@ -71,7 +71,7 @@ export default () => {
       setSelectedFile(file);
       setFileExtension(fileExtension);
       let arr1=triggerFunction(fileExtension, folderName)
-      //console.log(arr1)
+      //////////console.log(arr1)
       setUrl(arr1[0]); // Update URL with folderName
       setKey(arr1[1])
       setIsFileSelected(true); // Enable upload button
@@ -94,8 +94,8 @@ export default () => {
       const fileContent = event.target.result;
       // Perform your upload logic here
       // For demonstration, let's just log the file extension and content
-      //console.log('Selected File Extension:', fileExtension);
-      //console.log('File Content:', fileContent);
+      //////////console.log('Selected File Extension:', fileExtension);
+      //////////console.log('File Content:', fileContent);
   
       try {
         // Example: Uploading file content using Fetch
@@ -111,7 +111,7 @@ export default () => {
           throw new Error('Network response was not ok');
         }
 
-        //console.log('File uploaded successfully:', responseFile);
+        //////////console.log('File uploaded successfully:', responseFile);
       }catch (error) {
           //console.error('Error:', error);
           toast.error('Failed to add image'); // Display error toast if addition fails
@@ -125,10 +125,10 @@ export default () => {
           try {
               let objid = [];
               for (let i = 0; i < selectedusers.length; i++) {
-                  //console.log(selectedusers[i]);
+                  //////////console.log(selectedusers[i]);
                   objid.push(selectedusers[i].id);
               }
-              //console.log(objid);
+              //////////console.log(objid);
       
               let body = {
                   name: projectName,
@@ -143,11 +143,9 @@ export default () => {
               };
       
               const responseFormData = await axios.post(`${baseurl}/project/create`, body);
-              //console.log(responseFormData);
+              //////////console.log(responseFormData);
               toast.success('Image added successfully'); // Call toast.success after successful addition
       
-              // Reload page after successful submission
-              window.location.reload();
       
               // Clear form data after submission
           } catch (error) {
@@ -194,7 +192,7 @@ export default () => {
   }
 
   const handleDelete = (id) => {
-    //console.log(id)
+    //////////console.log(id)
     const token = localStorage.getItem('token');
 
     axios.delete(`${baseurl}/project/${id}`, {
@@ -203,7 +201,7 @@ export default () => {
       }
     })
       .then(response => {
-        //console.log('Record deleted successfully:', response.data);
+        //////////console.log('Record deleted successfully:', response.data);
         setData(prevData => prevData.filter(item => item.id !== id));
         toast.success('Record deleted successfully'); // Display success toast
         window.location.reload()
@@ -223,20 +221,20 @@ export default () => {
    //get Projects
     axios.put(`${baseurl}/project/`)
       .then(response => {
-        //console.log(response.data);
+        //////////console.log(response.data);
         setData(response.data);
       })
       .catch(error => {
-        //console.log(error);
+        //////////console.log(error);
       });
   // get Users
   axios.get(`${baseurl}/user/`)
   .then(response => {
-    //console.log(response.data);
+    //////////console.log(response.data);
     setUsers(response.data);
   })
   .catch(error => {
-    //console.log(error);
+    //////////console.log(error);
   });
       
   }, []);
@@ -258,7 +256,7 @@ export default () => {
     setClickedImage(null);
   }
   const handleEditModal = (item) => {
-    //console.log(item)
+    //////////console.log(item)
     let temp=[]
     let tempuser=item.users
     for(let j=0;j<users.length;j++){
@@ -269,7 +267,7 @@ export default () => {
         })
       }
     }
-    //console.log(temp,"hi")
+    //////////console.log(temp,"hi")
 
     setEditProjectId(item._id)
     setEditSelectedusers(temp)
@@ -297,8 +295,8 @@ export default () => {
       const fileContent = event.target.result;
       // Perform your upload logic here
       // For demonstration, let's just log the file extension and content
-      //console.log('Selected File Extension:', fileExtension);
-      //console.log('File Content:', fileContent);
+      //////////console.log('Selected File Extension:', fileExtension);
+      //////////console.log('File Content:', fileContent);
   
       try {
         // Example: Uploading file content using Fetch
@@ -314,7 +312,7 @@ export default () => {
           throw new Error('Network response was not ok');
         }
 
-        //console.log('File uploaded successfully:', responseFile);
+        //////////console.log('File uploaded successfully:', responseFile);
       }catch (error) {
           //console.error('Error:', error);
           toast.error('Failed to add image'); // Display error toast if addition fails
@@ -327,14 +325,14 @@ export default () => {
 
 
 
-    //console.log("try")
+    //////////console.log("try")
     const token = localStorage.getItem('token');
-    //console.log(users)
+    //////////console.log(users)
     let temp=[]
     for(let i=0;i<editselectedusers.length;i++){
       temp.push(editselectedusers[i].id)
     }
-    //console.log(temp)
+    //////////console.log(temp)
     const editData = {
       name: editProjectName,
       status:editProjectStatus,
@@ -346,17 +344,17 @@ export default () => {
       users:temp
       
     };
-    //console.log(clickedImage)
+    //////////console.log(clickedImage)
     
 
     try {
-      //console.log(editselectedusers)
+      //////////console.log(editselectedusers)
       const response = await axios.put(`${baseurl}/project/${editProjectId}`, editData, {
         headers: {
           Authorization: `${token}`
         }
       });
-      // //console.log('Updated data:', response.data);
+      // //////////console.log('Updated data:', response.data);
       toast.success('Data updated successfully');
       setShowModal(false);
       window.location.reload()
@@ -641,6 +639,7 @@ export default () => {
                         <option value="">Select Option</option>       
                         <option value="Neo">Neo Modern</option>
                         <option value="BZ">BZ Consultants</option>
+                        <option value="PMC">PMC</option>
                       </Form.Select>
                     </InputGroup>
                   </Form.Group>
