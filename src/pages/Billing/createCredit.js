@@ -52,8 +52,8 @@ export default () => {
 
   // for this file only
   const [users, setUsers] = useState([])
-  const [person, setPerson] = useState(null)
-  const [pname, setPname] = useState('')
+  let [person, setPerson] = useState("")
+  let [pname, setPname] = useState("")
   const [pnamearr, setPnamearr] = useState([])
   const [invoice, setInvoice] = useState(null)
   const [selectedusers, setSelectedusers] = useState([])
@@ -71,6 +71,7 @@ export default () => {
   const dispatch = useDispatch()
   const { contacts, loading, error } = useSelector((state) => state.contact);
   const { invoices, loading1, error1 } = useSelector((state) => state.invoice)
+  let [invoices1,setInvoices]=useState([])
   const token = localStorage.getItem('token');
 
 
@@ -279,13 +280,27 @@ export default () => {
     handleprojectFetch()
     dispatch(getcontacts())
     dispatch(getinvoice())
+    setInvoices(invoices)
     //////console.log(contacts)
-    //////console.log(invoices)
+    console.log(invoices)
   }, [contacts.length, invoices.length]);
 
 
 
-
+  const handleInvoiceFilter=()=>{
+    let temp=(invoices.filter((item)=>
+      (person==""||item.person==person)&&
+      (pname==""||item.project==pname)
+  ))
+    console.log(person,invoices1)
+    // for(let i=0;i<invoices1.length;i++){
+    //   if(invoices1[i].person==pid){
+    //     console.log(invoices1[i])
+    //   }
+    // }
+    // console.log(invoices1,temp)
+      setInvoices(temp)
+  }
 
 
 
@@ -334,39 +349,8 @@ export default () => {
     setShowModal(false);
     setClickedImage(null);
   }
-  const handleEditModal = (item) => {
-    setEditItemId(item._id);
-    setEditProjectName(item.ProjectName);
-    setEditServiceDescription(item.serviceDescription);
-    setEditIsActive(item.isActive);
-    setClickedImage(item.imageUrl)
-    setShowModal(true);
-    setEditMode(true); // Set editMode to true when opening the edit modal
-  }
+  
 
-  const handleEditSubmit = async () => {
-    const token = localStorage.getItem('token');
-    const editData = {
-      ProjectName: editProjectName,
-      serviceDescription: editServiceDescription,
-      isActive: editIsActive
-    };
-
-    try {
-      const response = await axios.put(`https://ab.execute-api.ap-south-1.amazonaws.com/production/api/services/${editItemId}`, editData, {
-        headers: {
-          Authorization: `${token}`
-        }
-      });
-      //////////console.log('Updated data:', response.data);
-      toast.success('Data updated successfully');
-      setShowModal(false);
-      setData(prevData => prevData.map(item => item._id === editItemId ? { ...item, ...editData } : item));
-    } catch (error) {
-      //console.error('Error updating record:', error);
-      toast.error('Failed to update record');
-    }
-  }
 
   // redirect to projects page
   const handleRedirect = (id) => {
@@ -411,7 +395,11 @@ export default () => {
                         <Form.Label>Contact</Form.Label>
                         <InputGroup>
                           <InputGroup.Text></InputGroup.Text>
-                          <Form.Select required value={person} onChange={(e) => setPerson(e.target.value)}>
+                          <Form.Select required value={person} onChange={(e) => {
+                            person=e.target.value
+                            setPerson(e.target.value)
+                            handleInvoiceFilter()
+                          }}>
                             <option value="">Select Option</option>
                             {/* Mapping through the arr array to generate options */}
                             {contacts.map((option, index) => (
@@ -503,7 +491,11 @@ export default () => {
                         <InputGroup>
                           <InputGroup.Text>
                           </InputGroup.Text>
-                          <Form.Select value={pname} onChange={(e) => setPname(e.target.value)}>
+                          <Form.Select value={pname} onChange={(e) => {
+                            pname=e.target.value
+                            setPname(e.target.value)
+                            handleInvoiceFilter()
+                          }}>
                             <option value="">Select Option</option>
                             {/* Mapping through the arr array to generate options */}
                             {pnamearr.map((option, index) => (
@@ -522,7 +514,7 @@ export default () => {
                           <Form.Select value={invoice} onChange={(e) => setInvoice(e.target.value)}>
                             <option value="">Select Option</option>
                             {/* Mapping through the arr array to generate options */}
-                            {invoices.map((option, index) => (
+                            {invoices1.map((option, index) => (
                               <option key={index} value={option._id}>{option._id}</option>
                             ))}
                           </Form.Select>

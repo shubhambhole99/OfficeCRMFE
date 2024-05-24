@@ -51,6 +51,17 @@ export const getbill = (body) => async (dispatch) => {
   }
 };
 
+export const disableBill = (body) => async (dispatch) => {
+  console.log(body)
+  try {
+    ////console.log(body)
+
+    const response = await axios.delete(`${baseurl}/income/${body}`);
+    
+  } catch (error) {
+  }
+};
+
 export default datasSlice.reducer;
 
 

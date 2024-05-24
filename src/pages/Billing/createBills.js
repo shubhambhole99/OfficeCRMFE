@@ -180,7 +180,7 @@ export default () => {
     try {
       const uniqueUrls = Array.from(uniqueUrlsSet);
       ////console.log(uniqueUrls);
-      const uniqueUrlsObjects = uniqueUrls.map(url => ({ file: url, name: url }));
+      const uniqueUrlsObjects = uniqueUrls.map(url => ({ file: url, name: "Proforma Invoice" }));
 
 
      

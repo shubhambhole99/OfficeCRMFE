@@ -46,6 +46,17 @@ export const getinvoice = () => async (dispatch) => {
   }
 };
 
+export const disableinvoice = (id) => async (dispatch) => {
+  try {
+    console.log(id)
+
+    const response = await axios.delete(`${baseurl}/invoice/${id}`);
+    
+  } catch (error) {
+  }
+};
+
+
 export default datasSlice.reducer;
 
 

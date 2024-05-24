@@ -1,1 +1,17 @@
 shubham
+
+Bills
+
+
+-Sorting on invoice_id
+-Edit invoice toLocaleString
+-edit bills add payment url(Done)
+-Invoice Fetch according to projects and contacts(Done)
+-Disable Bills(Done)
+-When invoice change automatically all credit fields change(Done)
+
+
+Tasks
+Task when delete and Add 
+-1 +1
+but  one method for total 
