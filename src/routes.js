@@ -25,6 +25,9 @@
 //     NotFound: { path: "/examples/404" },
 //     ServerError: { path: "/examples/500" },
 
+import createConsolidated from "./pages/Billing/createConsolidated";
+import CreateFormat from "./pages/format/CreateFormat";
+
 //     // docs
 //     DocsOverview: { path: "/documentation/overview" },
 //     DocsDownload: { path: "/documentation/download" },
@@ -64,11 +67,16 @@ export const Routes = {
     Settings: { path: "/settings" },
     Upgrade: { path: "/upgrade" },
     BootstrapTables: { path: "/tables/bootstrap-tables" },
+    // Projects
     CreateProjects: {path: "/projects/createProjects"},
     Motivation: {path: "/projects/:id"},
     Service: {path: "/projects/editprojects"},
+    Question:{path:"/projects/question"},
+
+    // Tasks
     CreateTasks: {path: "/tasks/createTasks"},
     ViewTasks: {path: "/tasks/viewTasks"},
+
     Testimonial: {path: "/about/testimonial"},
     Services: {path: "/services/services"},
     Contact: {path: "/contact/contact"},
@@ -121,11 +129,16 @@ export const Routes = {
 
     // Finance
     CreateInvoice:{path:'/billing/createinvoice'},
-    viewBills:{path:'/billing/viewBills'},
-    
-
-    // Credit
     CreateCredit:{path:'/billing/createBill'},
+    viewBills:{path:'/billing/viewBills'},
+    createConsolidated:{path:"/billing/createConsolidated"},
+    
+    // Credit
+
+    // Format
+    CreateFormat:{path:'/format/create'},
+    Questions:{path:'/format/questions'},
+    
 
 
     

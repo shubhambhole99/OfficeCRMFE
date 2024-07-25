@@ -10,12 +10,12 @@ export default ({taskid,showModal2,setShowModal2}) => {
 
     const handleaddhistorysubmit=async(e)=>{
       e.preventDefault()
-        //////////console.log(texthistory)
+        //////////////////console.log(texthistory)
         const token = localStorage.getItem('token');
         const editData = {
           taskDescription: texthistory,
         };
-        //////////console.log(editData)
+        //////////////////console.log(editData)
     
         try {
           const response = await axios.post(`${baseurl}/history/create/${taskid}`, editData, {
@@ -23,7 +23,7 @@ export default ({taskid,showModal2,setShowModal2}) => {
               Authorization: `Bearer ${token}`
             }
           });
-          //////////console.log(response.data);
+          //////////////////console.log(response.data);
           
           toast.success("History Added Succesfully");
           setShowModal2(false);

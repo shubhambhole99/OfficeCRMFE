@@ -19,7 +19,7 @@ const datasSlice = createSlice({
       state.error = null;
     },
     fetchDataSuccess(state, action) {
-        // ////////console.log(action.payload)
+        // ////////////////console.log(action.payload)
       state.invoices = action.payload;
       state.loading = false;
     },
@@ -37,18 +37,18 @@ export const getinvoice = () => async (dispatch) => {
   try {
 
     const response = await axios.put(`${baseurl}/invoice/`);
-    // //////console.log(response.data)
+    // //////////////console.log(response.data)
     dispatch(fetchDataSuccess(response.data));
     // return response.data;
   } catch (error) {
-    ////////console.log(error)
+    ////////////////console.log(error)
     dispatch(fetchDataFailure(error.message));
   }
 };
 
 export const disableinvoice = (id) => async (dispatch) => {
   try {
-    console.log(id)
+    ////////console.log(id)
 
     const response = await axios.delete(`${baseurl}/invoice/${id}`);
     

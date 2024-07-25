@@ -10,6 +10,11 @@ import {triggerFunction,getPredefinedUrl} from '../../components/SignedUrl';
 import { useHistory } from 'react-router-dom';
 import {check} from '../../checkloggedin'
 import Multiselect from "../../components/Multiselect";
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchProjects } from "../../features/projectslice";
+
+
+
 
 
 export default () => {
@@ -32,7 +37,7 @@ export default () => {
 
   // State variables for edit modal
 
-
+  let dispatch=useDispatch()
 
   ////mine
   const [key,setKey]=useState("");
@@ -62,16 +67,16 @@ export default () => {
   let [isActives,setIsActives]=useState(null)
 
 
-  const types=["Developer","Financer","MEP","Structural","Architect","Land Owner","Agent","Miscellaneous Consultant"]
+  const types=["Developer","Financer","MEP","Structural","Architect","Land Owner","Agent","Miscellaneous Consultant","Society Member"]
   
-  const handleFileChange = (event) => {
+  const handleFileChange = async (event) => {
     const file = event.target.files[0];
     if (file) {
       // Read file extension
       const fileExtension = file.name.split('.').pop();
       setSelectedFile(file);
       setFileExtension(fileExtension);
-      let arr1=triggerFunction(fileExtension, folderName)
+      let arr1=await triggerFunction(fileExtension, folderName)
       setUrl(arr1[0]); // Update URL with folderName
       setKey(arr1[1])
       setIsFileSelected(true); // Enable upload button
@@ -98,9 +103,9 @@ export default () => {
         description: message,
         projects:ids,
       };
-      ////////console.log(body)
+      //////////////////console.log(body)
      const response = await axios.post(`${baseurl}/contact/create`, body);
-     ////////console.log(response.data)
+     //////////////////console.log(response.data)
      setName('')
      setPhone('');
      setEmail('');
@@ -118,27 +123,26 @@ export default () => {
   ////////////////////////////////////////////
 
   const handleprojectFetch=async()=>{
-    //////////console.log(companyname)
-    let body={
+    ////////////////////console.log(companyname)
+   
+
+    dispatch(fetchProjects({
       company:companyname?companyname:null,
       status:isActive?isActive:null
-    }
-    //////////console.log(body)
-    await axios.put(`${baseurl}/project/`,body)
-    .then(response => {
-      setPnamearr(response.data);
-      // ////////console.log(response.data)
-    })
-    .catch(error => {
-      //console.error(error);
-    });
+    })).then((resp)=>{
+      setPnamearr(resp)
+      // ////////console.log(resp)
+    }).catch(error=>{
 
+    })
   }
+
+
 
 
   //For Fetching Users and Projects
   useEffect(() => {
-   //////////console.log(check())
+   ////////////////////console.log(check())
    axios.get(`${baseurl}/user`)
    .then(response => {
      setUsers(response.data);
@@ -149,7 +153,7 @@ export default () => {
     
 
       handleprojectFetch()
-      ////////console.log(pnamearr)
+      //////////////////console.log(pnamearr)
   }, []);
 
  
@@ -174,7 +178,7 @@ export default () => {
       }
     })
       .then(response => {
-        //////////console.log('Record deleted successfully:', response.data);
+        ////////////////////console.log('Record deleted successfully:', response.data);
         setData(prevData => prevData.filter(item => item.id !== id));
         toast.success('Record deleted successfully'); // Display success toast
       })

@@ -7,13 +7,13 @@ import { ToastContainer, toast } from 'react-toastify';
 import {baseurl} from "../api";
 
 const initialState = {
-  contacts: [],
+consolidated: [],
   loading: false,
   error: null
 };
 
 const datasSlice = createSlice({
-  name: 'contacts',
+  name: 'consolidated',
   initialState,
   reducers: {
     fetchDataStart(state) {
@@ -22,7 +22,7 @@ const datasSlice = createSlice({
     },
     fetchDataSuccess(state, action) {
         ////////////////console.log("state,action")
-      state.contacts = action.payload;
+      state.consolidated = action.payload;
       state.loading = false;
     },
     fetchDataFailure(state, action) {
@@ -34,25 +34,25 @@ const datasSlice = createSlice({
 
 export const { fetchDataStart, fetchDataSuccess, fetchDataFailure } = datasSlice.actions;
 
-export const getcontacts = () => async (dispatch) => {
+export const getConsolidated = () => async (dispatch) => {
   dispatch(fetchDataStart());
   try {
-    const response = await axios.put(`${baseurl}/contact/all`);
-    const sortedData = (response.data).sort((a, b) => a.name.localeCompare(b.name));
-
-
-    dispatch(fetchDataSuccess(sortedData));
+    const response = await axios.get(`${baseurl}/consolidated/`);
+    // const sortedData = (response.data).sort((a, b) => a.name.localeCompare(b.name));
+    // ////console.log(response.data)
+    dispatch(fetchDataSuccess(response.data));
+    return response.data
   } catch (error) {
     dispatch(fetchDataFailure(error.message));
   }
 };
 
-export const deleteContact = (data) => async (dispatch) => {
+export const disableConsolidated = (id) => async (dispatch) => {
   dispatch(fetchDataStart());
   try {
+    ////console.log(id)
     const token = localStorage.getItem('token');
-    //////////////console.log(data)
-    const response = await axios.delete(`${baseurl}/contact/${data}`,{
+    const response = await axios.put(`${baseurl}/consolidated/disable/${id}`,{
       headers: {
         Authorization: `${token}`
       }});

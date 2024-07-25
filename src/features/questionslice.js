@@ -7,13 +7,13 @@ import { ToastContainer, toast } from 'react-toastify';
 import {baseurl} from "../api";
 
 const initialState = {
-  contacts: [],
+questions: [],
   loading: false,
   error: null
 };
 
 const datasSlice = createSlice({
-  name: 'contacts',
+  name: 'question',
   initialState,
   reducers: {
     fetchDataStart(state) {
@@ -22,7 +22,7 @@ const datasSlice = createSlice({
     },
     fetchDataSuccess(state, action) {
         ////////////////console.log("state,action")
-      state.contacts = action.payload;
+      state.questions = action.payload;
       state.loading = false;
     },
     fetchDataFailure(state, action) {
@@ -34,35 +34,35 @@ const datasSlice = createSlice({
 
 export const { fetchDataStart, fetchDataSuccess, fetchDataFailure } = datasSlice.actions;
 
-export const getcontacts = () => async (dispatch) => {
+export const getquestions = () => async (dispatch) => {
   dispatch(fetchDataStart());
   try {
-    const response = await axios.put(`${baseurl}/contact/all`);
-    const sortedData = (response.data).sort((a, b) => a.name.localeCompare(b.name));
-
-
-    dispatch(fetchDataSuccess(sortedData));
-  } catch (error) {
-    dispatch(fetchDataFailure(error.message));
-  }
-};
-
-export const deleteContact = (data) => async (dispatch) => {
-  dispatch(fetchDataStart());
-  try {
-    const token = localStorage.getItem('token');
-    //////////////console.log(data)
-    const response = await axios.delete(`${baseurl}/contact/${data}`,{
-      headers: {
-        Authorization: `${token}`
-      }});
-     return true;
+    const response = await axios.put(`${baseurl}/question/`)
+    // const sortedData = (response.data).sort((a, b) => a.name.localeCompare(b.name));
+    //console.log(response.data)
     dispatch(fetchDataSuccess(response.data));
+    return response.data
   } catch (error) {
-    return false
     dispatch(fetchDataFailure(error.message));
   }
 };
+
+// export const disableConsolidated = (id) => async (dispatch) => {
+//   dispatch(fetchDataStart());
+//   try {
+//     ////console.log(id)
+//     const token = localStorage.getItem('token');
+//     const response = await axios.put(`${baseurl}/consolidated/disable/${id}`,{
+//       headers: {
+//         Authorization: `${token}`
+//       }});
+//      return true;
+//     dispatch(fetchDataSuccess(response.data));
+//   } catch (error) {
+//     return false
+//     dispatch(fetchDataFailure(error.message));
+//   }
+// };
 
 // export const getcontact=(data)=>async(dispatch)=>{
 

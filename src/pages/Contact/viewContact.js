@@ -7,13 +7,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Breadcrumb, Col, Row, Form, Card, Button, Table, Container, InputGroup, Modal, Tab, Nav } from '@themesberg/react-bootstrap';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import {baseurl} from "../../api";
+import {baseurl,ProjectStatus} from "../../api";
 import { triggerFunction, getPredefinedUrl } from '../../components/SignedUrl';
 import { useHistory } from 'react-router-dom';
 import { check } from '../../checkloggedin';
 import Multiselect from "../../components/Multiselect";
-import { useSelector, useDispatch } from 'react-redux';
 import { fetchAsyncData,deleteContact } from '../../features/contactslice'
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchProjects } from "../../features/projectslice";
 
 export default () => {
   const [pname, setPname] = useState('');
@@ -25,6 +26,7 @@ export default () => {
   const [type,setType]=useState("")
   const [search,setSearch]=useState("")
 
+  let dispatch=useDispatch()
 
   // for edit
   const [taskid,seteditTaskid]=useState("")
@@ -58,13 +60,13 @@ export default () => {
   const [showModal2,setShowModal2]=useState(false);
  
 // common for all
-  const dispatch = useDispatch();
+ 
 
   // for users
   const {contacts,loading,error}=useSelector((state) => state.contact);
  
 //   useEffect(() => {
-//     // ////////console.log(contacts)
+//     // //////////////////console.log(contacts)
 //     // (async () =>{
 //     // const response = await axios.put(`${baseurl}/task/filter`, {
 //     //   project:pname||undefined,
@@ -74,16 +76,16 @@ export default () => {
 //     // dispatch(fetchAsyncData()).then(result=>{
 //     //   setUsers(result);
 //     // }).catch(err=>{
-//     //   // ////////console.log(err)
+//     //   // //////////////////console.log(err)
 //     // })
 // //   })()
 //   // dispatch(fetchAsyncData())
 //   if(contacts.length!=0){
-//     // ////////console.log("once")
+//     // //////////////////console.log("once")
 //     // setUsers(user1)
 //   }
 //   // setUsers(user1)
-//   // ////////console.log(loading)
+//   // //////////////////console.log(loading)
 //   handleprojectFetch()
 //     // handleFetch()
 //   }, [contacts.length]);
@@ -94,28 +96,23 @@ useEffect(()=>{
 },[])
 
   const handleprojectFetch=async()=>{
-    //////////console.log(companyname)
-    let body={
+    ////////////////////console.log(companyname)
+    dispatch(fetchProjects({
       company:companyname?companyname:null,
       status:isActive?isActive:null
-    }
-    //////////console.log(body)
-    await axios.put(`${baseurl}/project/`,body)
-    .then(response => {
-      setPnamearr(response.data);
-      // //////////console.log(response.data)
+    })).then((resp)=>{
+      setPnamearr(resp)
+      // ////////console.log(resp)
+    }).catch(error=>{
     })
-    .catch(error => {
-      //console.error(error);
-    });
 
   }
   const findprojectname=(projects)=>{
-    // ////////console.log(projects,"Find project name")
-    // ////////console.log(pnamearr)
+    // //////////////////console.log(projects,"Find project name")
+    // //////////////////console.log(pnamearr)
     let str=""
     for(let i=0;i<projects.length;i++){
-      ////////console.log(projects[i])
+      //////////////////console.log(projects[i])
     for(let j=0;j<pnamearr.length;j++){
       if(pnamearr[j]._id==projects[i]){
         str=str+"{"+pnamearr[j].name+"}"
@@ -130,16 +127,16 @@ useEffect(()=>{
     if(e){
     e.preventDefault()
     }
-    ////////console.log("hello")
+    //////////////////console.log("hello")
     const body={
         project:pname,
         type:type
     }
-    ////////console.log(body)
+    //////////////////console.log(body)
     try {
       const response = await axios.put(`${baseurl}/contact/all`,body);
       setData(response.data);
-      ////////console.log(response.data)
+      //////////////////console.log(response.data)
 
     } catch (error) {
       //console.error(error);
@@ -148,10 +145,10 @@ useEffect(()=>{
 
 
   const handleEditModal = (item) => {
-    ////////console.log(pnamearr)
+    //////////////////console.log(pnamearr)
     let temp=[]
     let temppro=item.projects
-    ////////console.log(temppro,pnamearr)
+    //////////////////console.log(temppro,pnamearr)
     for(let j=0;j<pnamearr.length;j++){
       if((temppro).includes(pnamearr[j]._id)){
         temp.push({
@@ -160,7 +157,7 @@ useEffect(()=>{
         })
       }
     }
-    ////////console.log(temp,"hi")
+    //////////////////console.log(temp,"hi")
   setEditconid(item._id)
   setEditProjects(temp)
   setEditname(item.name)
@@ -173,7 +170,7 @@ useEffect(()=>{
   }
 
   const handleEditSubmit=async()=>{
-    //////////console.log(taskid,"chekcing task id")
+    ////////////////////console.log(taskid,"chekcing task id")
     const token = localStorage.getItem('token');
     let temp=[]
     for(let i=0;i<editprojects.length;i++){
@@ -187,7 +184,7 @@ useEffect(()=>{
       description: editDescription,
       projects:temp
     };
-    //////console.log(editData)
+    ////////////////console.log(editData)
 
     try {
       const response = await axios.put(`${baseurl}/contact/${editconid}`, editData, {
@@ -195,7 +192,7 @@ useEffect(()=>{
           Authorization: `Bearer ${token}`
         }
       });
-      //////console.log(response.data);
+      ////////////////console.log(response.data);
       toast.success("Task updated successfully");
       setShowModal(false);
       setEditMode(false);
@@ -212,7 +209,7 @@ useEffect(()=>{
   }
 
   const handletaskhistory=async (row)=>{
-    //////////console.log("hi")
+    ////////////////////console.log("hi")
     try{
       // fetching all Histories of one task
       let response=await axios.get(`${baseurl}/history/${row._id}`)
@@ -221,13 +218,13 @@ useEffect(()=>{
       for(let i=0;i<response.data.length;i++){
       let res=await axios.get(`${baseurl}/history/single/${(response.data)[i]._id}`)
       temp.push(res.data)
-      //////////console.log(temp)
+      ////////////////////console.log(temp)
       }
       setHistory(temp)
       
    
     }catch(error){
-      //////////console.log(error)
+      ////////////////////console.log(error)
     }
    
     
@@ -253,7 +250,7 @@ useEffect(()=>{
   
   
   
-  const types=["Developer","Financer","MEP","Structural","Architect","Land Owner","Agent","Miscellaneous Consultant"]
+  const types=["Developer","Financer","MEP","Structural","Architect","Land Owner","Agent","Miscellaneous Consultant","Society Member"]
 
   
   return (
@@ -288,9 +285,11 @@ useEffect(()=>{
                 setIsActive(e.target.value)
                 handleprojectFetch()
                 }}>
-                  <option value="">Select Option</option>
-                  <option value="Active">Active</option>
-                  <option value="Inactive">Inactive</option>
+           <option value="">Select Option</option>
+                            {/* Mapping through the arr array to generate options */}
+                            {ProjectStatus.map((option, index) => (
+                              <option key={index} value={option}>{option}</option>
+                            ))}
                 </Form.Select>
               </InputGroup>
             </Form.Group>

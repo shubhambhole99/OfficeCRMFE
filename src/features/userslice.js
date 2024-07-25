@@ -19,7 +19,7 @@ const datasSlice = createSlice({
       state.error = null;
     },
     fetchDataSuccess(state, action) {
-        // ////////console.log(action.payload)
+        // ////////////////console.log(action.payload)
       state.user1 = action.payload;
       state.loading = false;
     },
@@ -37,11 +37,11 @@ export const fetchAsyncData = () => async (dispatch) => {
   try {
 
     const response = await axios.get(`${baseurl}/user`);
-    // ////////console.log(response.data)
+    // ////////////////console.log(response.data)
     dispatch(fetchDataSuccess(response.data));
     return response.data;
   } catch (error) {
-    ////////console.log(error)
+    ////////////////console.log(error)
     dispatch(fetchDataFailure(error.message));
   }
 };

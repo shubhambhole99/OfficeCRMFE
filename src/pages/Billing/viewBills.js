@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Breadcrumb, Col, Row, Form, Card, Button, Table, Container, InputGroup, Modal, Tab, Nav } from '@themesberg/react-bootstrap';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { baseurl } from "../../api";
+import { baseurl, ProjectStatus, banknames,toi,tds,gst} from "../../api";
 import { triggerFunction, getPredefinedUrl } from '../../components/SignedUrl';
 import { useHistory } from 'react-router-dom';
 import { check } from '../../checkloggedin';
@@ -15,8 +15,10 @@ import Multiselect from "../../components/Multiselect";
 import { useSelector, useDispatch } from 'react-redux';
 import { getcontacts, deleteContact } from '../../features/contactslice'
 import { getbill, disableBill } from '../../features/billslice'
-import { getinvoice,disableinvoice } from '../../features/invoiceSlice'
+import { getinvoice, disableinvoice } from '../../features/invoiceSlice'
 import '../../style.css'; // Import the CSS file where your styles are defined
+import { fetchProjects } from "../../features/projectslice";
+import { getConsolidated } from "../../features/consolidatedSlice";
 
 
 export default () => {
@@ -28,6 +30,7 @@ export default () => {
   let [pnamearr, setPnamearr] = useState([]);
   const [taskstatus, setTaskStatus] = useState('');
   let [data, setData] = useState([]);
+  let [bank, setBank] = useState("")
   const [users, setUsers] = useState([]);
   const [type, setType] = useState("")
   const [search, setSearch] = useState("")
@@ -61,6 +64,11 @@ export default () => {
   const [editSubject, setEditSubject] = useState('');
   const [editDescription, setEditDescription] = useState('');
   const [editInvoice, setEditInvoice] = useState('');
+  const [edittds,setEdittds]=useState('')
+  const [editgst,setgst]=useState('')
+
+
+
   let [editUrls, setEditUrls] = useState('');
   const [editcredittype, seteditcredittype] = useState('')
 
@@ -76,6 +84,7 @@ export default () => {
   const [history, setHistory] = useState([])
   const [taskthis, settaskthis] = useState(false);
   const [showModal1, setShowModal1] = useState(false);
+  let [credittype,setcredittype]=useState('')
 
 
   // sort by created date
@@ -100,9 +109,13 @@ export default () => {
   let [invoice, setInvoice] = useState([])
   const [bill, setBill] = useState([])
   //for bills
-  const [payment, setpayment] = useState(false)
-  const [invoi, setinvoi] = useState(false)
-
+  let [payment, setpayment] = useState(false)
+  let [invoi, setinvoi] = useState(false)
+  let [isChecked, setisChecked] = useState(true)
+  let [sum, setSum] = useState(0)
+  let [conso, setconso] = useState([])
+  let [currconso, setcurrconso] = useState({})
+  let [isDisabled,setisDisabled]=useState(false)
 
 
   // filtering from Invoice,Bills
@@ -111,16 +124,33 @@ export default () => {
     handleprojectFetch()
     handleinvoiceFetch()
     changeData(typebill)
-    dispatch(getbill())
+    dispatch(getbill(isDisabled))
     dispatch(getcontacts())
+    dispatch(getConsolidated()).then((res) => {
+      setconso(res)
+    })
+
+
     // dispatch(getinvoice())
-    // //console.log(contacts)
-    // //console.log(bills)
-    // //console.log(invoices)
+    // ////////////console.log(contacts)
+    // ////////////console.log(bills)
+    // ////////////console.log(invoices)
   }, [contacts.length, invoice.length, bills.length])
 
+  const seedisable=(value)=>{
+    isDisabled=value
+    dispatch(getbill(value)).then(data => {
+      bills = data
+    })
+
+  }
+
+  useEffect(() => {
+    ////console.log(currconso)
+  }, [currconso])
+
   const changeData = (type) => {
-    ////console.log(type)
+    //////////////console.log(type)
     if (type == "invoice") {
       setData(invoice)
     }
@@ -129,10 +159,10 @@ export default () => {
     }
   }
   const findperson = (id) => {
-    // //console.log(id)
+    // ////////////console.log(id)
     for (let i = 0; i < contacts.length; i++) {
       if (contacts[i]._id == id) {
-        // //console.log(id,contacts[i]._id)
+        // ////////////console.log(id,contacts[i]._id)
         return contacts[i].name
       }
     }
@@ -141,61 +171,88 @@ export default () => {
 
   }
 
-  const handleAllfetch = (e) => {
-    e.preventDefault()
-    ////console.log("here")
-
-  }
-
 
   const handleFilter = async () => {
+    let tempsum = 0
+    let tempdata = []
+
+    // For Consolidated
+    let found = false
+    for (let i = 0; i < conso.length; i++) {
+      if (conso[i].project == pname) {
+        setcurrconso(conso[i])
+        currconso = conso[i]
+        ////console.log(currconso)
+        found = true
+        // return
+      }
+    }
+    if (found == false) {
+      setcurrconso({})
+      currconso = {}
+    }
+
 
     // .then((bill) => {
-    //   //console.log(bill,"from then")
+    //   ////////////console.log(bill,"from then")
     if (typebill === "bills") {
 
-      setData(bills.filter(item =>
+      // sort bills alphabetically according to amount
+      ////console.log(bills, "bills")
+      tempdata = bills.filter(item =>
         (companyname === "" || item.company === companyname) &&
         (pname === "" || item.project === pname) &&
-        (people === "" || item.person === people)
-      ));
+        (people === "" || item.person === people) &&
+        (bank == "" || item.bank === bank)&&
+        (credittype== ""|| item.type===credittype)
+      )
+      setData(tempdata)
 
       // let temp=dispatch(getbill())
-
-
     }
     if (typebill == "invoice") {
-
-      setData(invoice.filter(item =>
+      ////console.log(invoice, "invoice")
+      tempdata = invoice.filter(item =>
         (companyname === "" || item.company === companyname) &&
         (pname === "" || item.project === pname) &&
-        (people === "" || item.person === people)
-      ));
+        (people === "" || item.person === people) &&
+        (credittype===""||item.type===credittype)
 
+      )
+      setData(tempdata)
       // let temp=dispatch(getbill())
 
-
     }
+    // for Sum
+
+    for (let i = 0; i < tempdata.length; i++) {
+      tempsum = tempsum + tempdata[i].amount
+    }
+    setSum(tempsum)
+
+
+
   }
   const sortbycreatedby = () => {
     let temp = createdoption + 1
     setCreatedoption(temp)
-    //console.log(temp)
+    //////////console.log(temp)
     if (temp == 3) {
       if (typebill == "bills") {
-        setData(bills)
+        // setData(bills)
       }
       if (typebill == "invoice") {
 
       }
-      setCreatedoption(0)
+      setCreatedoption(1)
+      temp = 1
     }
 
     let sortedData = []
     for (let i = 0; i < data.length; i++) {
       sortedData[i] = data[i]
     }
-    //console.log(sortedData)
+    ////////////console.log(sortedData)
     if (temp == 1) {
       sortedData.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
       setData(sortedData)
@@ -209,28 +266,23 @@ export default () => {
 
 
   const handleprojectFetch = async () => {
-    ////////////console.log(companyname)
-    let body = {
+    //////////////////////console.log(companyname)
+    dispatch(fetchProjects({
       company: companyname ? companyname : null,
       status: isActive ? isActive : null
-    }
-    ////////////console.log(body)
-    await axios.put(`${baseurl}/project/`, body)
-      .then(response => {
-        setPnamearr(response.data);
-        //   ////////console.log(response.data)
-      })
-      .catch(error => {
-        ////console.error(error);
-      });
+    })).then((resp) => {
+      setPnamearr(resp)
+      // ////////console.log(resp)
+    }).catch(error => {
 
+    })
   }
   const findprojectname = (project) => {
-    //////console.log(project,"Find project name")
-    // //////////console.log(pnamearr)
+    ////////////////console.log(project,"Find project name")
+    // ////////////////////console.log(pnamearr)
     let str = ""
     for (let i = 0; i < pnamearr.length; i++) {
-      // //////console.log(pnamearr[i])
+      // ////////////////console.log(pnamearr[i])
       if (pnamearr[i]._id == project) {
         str = str + "{" + pnamearr[i].name + "}"
         break
@@ -238,7 +290,7 @@ export default () => {
 
     }
     // for(let i=0;i<projects.length;i++){
-    //////////console.log(projects[i])
+    ////////////////////console.log(projects[i])
     //     for(let j=0;j<pnamearr.length;j++){
     //   if(pnamearr[j]._id==projects[i]){
     //     str=str+"{"+pnamearr[j].name+"}"
@@ -253,15 +305,15 @@ export default () => {
     if (e) {
       e.preventDefault()
     }
-    //////////console.log("hello")
+    ////////////////////console.log("hello")
     const body = {
       project: pname,
       type: type
     }
-    //////////console.log(body)
+    ////////////////////console.log(body)
     try {
       const response = await axios.put(`${baseurl}/invoice/`, body);
-      // console.log(response.data, "invoices")
+      // //////////console.log(response.data, "invoices")
       setInvoice(response.data);
       return response.data
 
@@ -272,12 +324,13 @@ export default () => {
   };
 
   const handleEditModal = (item) => {
-    //////////console.log(pnamearr)
-    console.log(item)
+    ////////////////////console.log(pnamearr)
+    //////////console.log(item)
     let temp = []
     let temppro = item.projects
+    //console.log(invoi,payment)
     if (typebill == 'bills') {
-      console.log("hi from bills")
+      //////////console.log("hi from bills")
       setbillid(item._id)
       seteditcreatedAt(item.createdAt);
       setEditAmount(item.amount);
@@ -292,7 +345,7 @@ export default () => {
       seteditcredittype(item.type)
     }
     if (typebill == 'invoice') {
-      console.log("hi from invoice")
+      //////////console.log("hi from invoice")
       setinvoiceid(item._id)
       seteditcreatedAt(item.createdAt);
       setEditAmount(item.amount);
@@ -305,7 +358,7 @@ export default () => {
       seteditcredittype(item.type)
 
     }
-    //////////console.log(temppro,pnamearr)
+    ////////////////////console.log(temppro,pnamearr)
     // for(let j=0;j<pnamearr.length;j++){
     //   if((temppro).includes(pnamearr[j]._id)){
     //     temp.push({
@@ -314,8 +367,8 @@ export default () => {
     //     })
     //   }
     // }
-    //////////console.log(temp,"hi")
-    //////console.log(item,"hi")
+    ////////////////////console.log(temp,"hi")
+    ////////////////console.log(item,"hi")
 
     setShowModal(true);
 
@@ -323,14 +376,14 @@ export default () => {
 
   const handleEditSubmit = async (e) => {
     e.preventDefault()
-    // console.log(selectedFiles[0],"hi")
-    // console.log(typebill)
+    // //////////console.log(selectedFiles[0],"hi")
+    // //////////console.log(typebill)
     const uniqueUrlsSet = new Set(); // Create a Set to store unique URLs
 
-    //console.log(selectedFiles,selectedFiles.length,'selectedFiles.length')
+    ////////////console.log(selectedFiles,selectedFiles.length,'selectedFiles.length')
     let urls = []
     for (let i = 0; i < selectedFiles.length; i++) {
-      // //////////console.log("hi")
+      // ////////////////////console.log("hi")
       if (selectedFiles[i] != null) {
 
         let selectedFile = selectedFiles[i][2]
@@ -342,15 +395,15 @@ export default () => {
         }
 
         if (selectedFile != null) {
-          // ////console.log("hi",selectedFile)
+          // //////////////console.log("hi",selectedFile)
           const reader = new FileReader();
           reader.onload = async (event) => {
             const fileContent = event.target.result;
             // urls.push(getPredefinedUrl(selectedFiles[i][1]))
             // Perform your upload logic here
             // For demonstration, let's just log the file extension and content
-            //////////console.log('Selected File Extension:', fileExtension);
-            //////////console.log('File Content:', fileContent);
+            ////////////////////console.log('Selected File Extension:', fileExtension);
+            ////////////////////console.log('File Content:', fileContent);
 
             try {
               // Example: Uploading file content using Fetch
@@ -397,9 +450,10 @@ export default () => {
         for (let i = 0; i < editUrls.length; i++) {
           temp[i] = editUrls[i]
         }
+        //console.log(temp,payment,invoi)
         if (payment) {
           temp[0] = { file: uniqueUrls[0], name: "Payment Proof" }
-          console.log(editUrls)
+          //////////console.log(editUrls)
         }
         if (invoi) {
           if (uniqueUrls.length == 2) {
@@ -412,7 +466,7 @@ export default () => {
 
         // if(selectedFiles[0]!=undefined){
         //   editUrls[0]={file:uniqueUrls[0],name:"Payment Proof"}
-        //   console.log(editUrls)
+        //   //////////console.log(editUrls)
         // }
         // if(selectedFiles[1]!=undefined){
         //   if(uniqueUrls.length==2){
@@ -421,12 +475,12 @@ export default () => {
         //   else{
         //     editUrls[1]={file:uniqueUrls[0],name:"Tax Invoice"}
         //   }
-        //   console.log(editUrls)
+        //   //////////console.log(editUrls)
         // }
-        // console.log(editUrls)
+        // //////////console.log(editUrls)
 
 
-        //console.log(uniqueUrlsObjects.length)
+        ////////////console.log(uniqueUrlsObjects.length)
         const body = {
           amount: editAmount,
           person: editPerson == '' ? undefined : editPerson,
@@ -437,12 +491,13 @@ export default () => {
           subject: editSubject,
           invoice: editInvoice == '' ? undefined : editInvoice,
           urls: temp,//new
+          previous:[],
           type: editcredittype,
           bank: editBank
 
         };
 
-        console.log(body)
+        //////////console.log(body)
 
         const responseFormData = await axios.put(`${baseurl}/income/${editbillid}`, body);
         setSelectedFiles([])
@@ -450,14 +505,19 @@ export default () => {
           bills = data
         })
         // dispatch(getbill())
+        payment=false
+        invoi=false
+        setpayment(false)
+        setinvoi(false)
         setTimeout(() => handleFilter(), 1000)
+        
       }
       if (typebill == "invoice") {
         const uniqueUrls = Array.from(uniqueUrlsSet);
-        ////console.log(uniqueUrls);
+        //////////////console.log(uniqueUrls);
         const uniqueUrlsObjects = uniqueUrls.map(url => ({ file: url, name: "Proforma Invoice" }));
 
-        //console.log(uniqueUrlsObjects.length)
+        ////////////console.log(uniqueUrlsObjects.length)
         const body = {
           amount: editAmount,
           person: editPerson == '' ? undefined : editPerson,
@@ -478,7 +538,7 @@ export default () => {
         const responseFormData = await axios.put(`${baseurl}/invoice/${editinvoiceid}`, body);
         setSelectedFiles([])
         handleinvoiceFetch().then(data => {
-          console.log(data)
+          //////////console.log(data)
           invoice = data
         })
         // dispatch(getbill())
@@ -500,51 +560,48 @@ export default () => {
     setShowModal(false)
   };
 
-  const handletaskhistory = async (row) => {
-    ////////////console.log("hi")
-    try {
-      // fetching all Histories of one task
-      let response = await axios.get(`${baseurl}/history/${row._id}`)
-      let temp = []
-
-      for (let i = 0; i < response.data.length; i++) {
-        let res = await axios.get(`${baseurl}/history/single/${(response.data)[i]._id}`)
-        temp.push(res.data)
-        ////////////console.log(temp)
+  const handleCheckboxChange = () => {
+    ////console.log("here")
+    ////console.log(conso)
+    let found = false
+    for (let i = 0; i < conso.length; i++) {
+      if (conso[i].project == pname) {
+        // setcurrconso(conso[i])
+        currconso = conso[i]
+        ////console.log(currconso)
+        found = true
+        // return
       }
-      setHistory(temp)
-
-
-    } catch (error) {
-      ////////////console.log(error)
+    }
+    if (found == false) {
+      // currconso={}
+      // setcurrconso({})
     }
 
-
-    setShowModal1(true)
-    settaskthis(true)
   }
 
 
-
-  const handleDelete = (e,id) => {
+  const handleDelete = (e, id) => {
     e.preventDefault()
     dispatch(disableBill(id))
-    setTimeout(() => {dispatch(getbill()).then(data => {
-      bills = data
-    })}, 1000)
+    setTimeout(() => {
+      dispatch(getbill()).then(data => {
+        bills = data
+      })
+    }, 1000)
     setTimeout(() => handleFilter(), 1000)
-    
+
   }
-  
+
 
   const [selectedFile, setSelectedFile] = useState(null);
   let [selectedFiles, setSelectedFiles] = useState([]);
   const [person, setPerson] = useState(null)
   const desiredContact = contacts.find(contact => contact._id == editPerson);
-  const handleFileChange = (event, tp) => {
+  const handleFileChange = async (event, tp) => {
     const files = event.target.files;
     const newSelectedFiles = [];
-    console.log(tp)
+    //////////console.log(tp)
     for (let i = 0; i < files.length; i++) {
 
       const file = files[i];
@@ -553,7 +610,7 @@ export default () => {
         // Read file extension
         const fileExtension = file.name;
         const desiredContact = contacts.find(contact => contact._id == editPerson);
-        const arr1 = triggerFunction(fileExtension, desiredContact.name);
+        const arr1 = await triggerFunction(fileExtension, desiredContact.name);
 
         // Add arr1[0] and arr1[1] to the newSelectedFiles array
         newSelectedFiles.push([arr1[0], arr1[1], file]);
@@ -573,7 +630,7 @@ export default () => {
 
 
     // Check the result
-    console.log(selectedFiles);
+    //////////console.log(selectedFiles);
   };
 
 
@@ -583,17 +640,14 @@ export default () => {
     return (istTime);
   }
 
-  const types = ["Developer", "Financer", "MEP", "Structural", "Architect", "Land Owner", "Agent", "Miscellaneous Consultant"]
-  const banknames = ['Misc', 'Bandhan-20100018657972', 'Bharat-612100014610', 'Bharat-610100084505', 'DNS-29010100001263', 'HDFC-1451050122678', 'HDFC-501000174801181']
-
 
 
   return (
     <>
       <ToastContainer />
       <form onSubmit={(e) => {
-        handleAllfetch(e)
         handleFilter()
+        e.preventDefault()
       }
       }>
         <Row>
@@ -642,8 +696,10 @@ export default () => {
                   handleprojectFetch();
                 }}>
                   <option value="">Select Option</option>
-                  <option value="Active">Active</option>
-                  <option value="Inactive">Inactive</option>
+                  {/* Mapping through the arr array to generate options */}
+                  {ProjectStatus.map((option, index) => (
+                    <option key={index} value={option}>{option}</option>
+                  ))}
                 </Form.Select>
               </InputGroup>
             </Form.Group>
@@ -653,7 +709,9 @@ export default () => {
               <Form.Label>Project name</Form.Label>
               <InputGroup>
                 <InputGroup.Text></InputGroup.Text>
-                <Form.Select value={pname} onChange={(e) => setPname(e.target.value)}>
+                <Form.Select value={pname} onChange={(e) => {
+                  setPname(e.target.value)
+                }}>
                   <option value="">Select Option</option>
                   {pnamearr.map((option, index) => (
                     <option key={index} value={option._id}>{option.name}</option>
@@ -676,6 +734,100 @@ export default () => {
               </InputGroup>
             </Form.Group>
           </Col>
+
+          <Col xs={12} md={4}>
+            <Form.Group id="people" className="mb-4">
+              <Form.Label>Bank</Form.Label>
+              <InputGroup>
+                <InputGroup.Text></InputGroup.Text>
+                <Form.Select value={bank} onChange={(e) => setBank(e.target.value)}>
+                  <option value="">Select Option</option>
+                  {banknames.map((option, index) => (
+                    <option key={index} value={option}>{option}</option>
+                  ))}
+                </Form.Select>
+              </InputGroup>
+            </Form.Group>
+          </Col>
+          <Col xs={12} md={4}>
+            <Form.Group id="people" className="mb-4">
+              <Form.Label>Type of Invoice/Credit</Form.Label>
+              <InputGroup>
+                <InputGroup.Text></InputGroup.Text>
+                <Form.Select value={credittype} onChange={(e) => {
+                  setcredittype(e.target.value)
+                }}>
+                  <option value="">Select Option</option>
+                  {toi.map((option, index) => (
+                    <option key={index} value={option}>{option}</option>
+                  ))}
+                </Form.Select>
+              </InputGroup>
+            </Form.Group>
+          </Col>
+          {/* isDisabled */}
+          <Col xs={12} md={4}>
+            <Form.Group id="people" className="mb-4">
+              <Form.Label>Is Disabled</Form.Label>
+              <InputGroup>
+                <InputGroup.Text></InputGroup.Text>
+                <Form.Select value={isDisabled} onChange={(e) => {
+                  setisDisabled(e.target.value)
+                  seedisable(e.target.value)
+                }}>
+                  {/* <option value="">Select Option</option> */}
+                  <option value={true}>True</option>
+                  <option value={false}>False</option>
+
+                </Form.Select>
+              </InputGroup>
+            </Form.Group>
+          </Col>
+          <Col xs={12} md={4} className="d-flex justify-content-center">
+            <Button style={{ height: "70px" }} variant="primary" type="submit" className="w-100 mt-3">
+              Submit
+            </Button>
+          </Col>
+          <Col style={{ width: "max-content", border: "3px solid black", borderRadius: "5px" }} xs={6} md={6}>
+            <Form.Group id="people" className="mb-4">
+              <input
+                type="checkbox"
+                checked={isChecked}
+                onChange={(e) => {
+                  handleCheckboxChange(e)
+                  setisChecked(!isChecked)
+                }}
+              />
+              <Form.Label>View Consolidated Statement for Project</Form.Label>
+            </Form.Group>
+            {isChecked ? (<>
+              {pname ? (
+                <>
+                  <h4>Selected Project:{findprojectname(pname)}</h4>
+                  <h4>Total Fees:{currconso.total_amount}</h4>
+                  <h4>Amount Till Stage:{currconso.amount_stage}</h4>
+                  <h4>Total Paid:{sum}</h4>
+                  <h4>Type:{currconso.type}</h4>
+                  <h4> Url:<a href={currconso?.urls?.length ? currconso.urls[0].file : ''} style={{ textDecoration: "underline", color: "blue" }}>{currconso?.urls?.length ? "Link" : ''}</a></h4>
+                  <h4>Description:<pre>{currconso.description}</pre></h4>
+
+                </>
+
+              ) : (
+                <p>Please Select Project</p>
+              )
+              }
+
+            </>
+
+            ) : (null)}
+
+          </Col>
+          <Col xs={12} md={4}>
+            <Form.Label></Form.Label>
+          </Col>
+
+
           {/* <Col xs={12} md={4}>
         <Form.Group id="people" className="mb-4">
           <Form.Label>Consultants</Form.Label>
@@ -699,11 +851,15 @@ export default () => {
           </InputGroup>
         </Form.Group>
       </Col> */}
-          <Col xs={12} md={2} className="d-flex justify-content-center">
-            <Button style={{ height: "70%" }} variant="primary" type="submit" className="w-100 mt-3">
-              Submit
-            </Button>
+
+          <Col xs={12} md={4}>
+
           </Col>
+
+          <Col xs={12} md={4}>
+
+          </Col>
+
         </Row>
       </form>
 
@@ -725,8 +881,9 @@ export default () => {
                 <Table responsive className="align-items-center table-flush">
                   <thead className="thead-light">
                     <tr>
-                      <th scope="col">createdAt</th>
+                    <th scope="col" className="unselectable" style={{ cursor: "pointer" }} onClick={sortbycreatedby}>Created At</th>
                       <th scope="col">InvoiceId</th>
+                      <th scope="col">Type</th>
                       <th scope="col">Amount</th>
                       <th scope="col">Amount Paid</th>
                       <th scope="col">Person</th>
@@ -746,13 +903,14 @@ export default () => {
                     ) : (
                       data.map((row, index) => (
                         <tr key={index}>
-                          <td>{row.createdAt}</td>
+                          <td>{timeinIndia(row.createdAt)}</td>
                           <td>{row._id}</td>
+                          <td>{row.type}</td>
                           <td>{row.amount}</td>
                           <td>{row.amount_paid}</td>
                           <td colSpan="1" style={{ whiteSpace: "pre-wrap" }}>{findperson(row.person)}</td>
                           <td colSpan="1" style={{ whiteSpace: "pre-wrap" }}>{row.company}</td>
-                          <td colSpan="1" style={{ cursor: "pointer", whiteSpace: "pre-wrap" }} onClick={() => handletaskhistory(row)}>{findprojectname(row.project)}</td>
+                          <td colSpan="1" style={{ cursor: "pointer", whiteSpace: "pre-wrap" }}>{findprojectname(row.project)}</td>
                           <td colSpan="1" style={{ whiteSpace: "pre-wrap" }}>{row.subject}</td>
                           <td colSpan="1"  ><pre style={{ whiteSpace: "pre-wrap" }}>{row.description}</pre></td>
                           {/* <td colSpan="1"  ><pre style={{ whiteSpace: "pre-wrap" }}>hi</pre></td> */}
@@ -769,8 +927,9 @@ export default () => {
                                   invoice = data
                                 })
                               }, 2000)
-                              setTimeout(() => {handleFilter()
-                                toast.success("Succesfully Deleted") 
+                              setTimeout(() => {
+                                handleFilter()
+                                toast.success("Succesfully Deleted")
                               }, 2000)
                             }} variant="danger" size="sm">
                               <FontAwesomeIcon icon={faTrash} />
@@ -803,7 +962,10 @@ export default () => {
                   <thead className="thead-light">
                     <tr>
                       <th scope="col" className="unselectable" style={{ cursor: "pointer" }} onClick={sortbycreatedby}>Created At</th>
+                      <th scope="col">Type</th>
                       <th scope="col">Amount</th>
+                      <th scope="col">TDS</th>
+                      <th scope="col">GST</th>
                       <th scope="col">Bank</th>
                       <th scope="col">Company</th>
                       <th scope="col">Person</th>
@@ -824,7 +986,10 @@ export default () => {
                       data.map((row, index) => (
                         <tr key={index}>
                           <td>{timeinIndia(row.createdAt)}</td>
+                          <td>{row.type}</td>
                           <td colSpan="1" style={{ whiteSpace: "pre-wrap" }}>{row.amount}</td>
+                          <td colSpan="1" style={{ whiteSpace: "pre-wrap" }}>{row.tds}</td>
+                          <td colSpan="1" style={{ whiteSpace: "pre-wrap" }}>{row.gst}</td>
                           <td colSpan="1" style={{ whiteSpace: "pre-wrap" }}>{row.bank}</td>
                           <td colSpan="1" style={{ whiteSpace: "pre-wrap" }}>{row.company}</td>
                           <td colSpan="1" style={{ whiteSpace: "pre-wrap" }}>{findperson(row.person)}</td>
@@ -832,19 +997,39 @@ export default () => {
                           <td colSpan="1" style={{ whiteSpace: "pre-wrap" }}>{row.subject}</td>
                           <td colSpan="1"  ><pre style={{ whiteSpace: "pre-wrap" }}>{row.description}</pre></td>
                           <td colSpan="1"  ><pre style={{ whiteSpace: "pre-wrap" }}>{row.invoice}</pre></td>
-                          <td colSpan="1"  ><pre style={{ whiteSpace: "pre-wrap" }}><a href={(row.urls[0])?.file} download style={{ textDecoration: "underline", color: "blue" }}>-{(row.urls[0])?.name}</a>
-                            <br />
-                            <a href={(row.urls[1])?.file} download style={{ textDecoration: "underline", color: "blue" }}>-{(row.urls[1])?.name}</a></pre></td>
+
+
+                          {row && (
+                            <td colSpan="1">
+                              <pre style={{ whiteSpace: "pre-wrap" }}>
+                                {row.urls && row.urls[0] && (
+                                  <>
+                                    <a href={row.urls[0].file} download style={{ textDecoration: "underline", color: "blue" }}>
+                                      -{row.urls[0].name}
+                                    </a>
+                                    <br />
+                                  </>
+                                )}
+                                {row.urls && row.urls[1] && (
+                                  <a href={row.urls[1].file} download style={{ textDecoration: "underline", color: "blue" }}>
+                                    -{row.urls[1].name}
+                                  </a>
+                                )}
+                              </pre>
+                            </td>
+                          )}
                           <td>
                             <Button style={{ backgroundColor: "aqua", color: "black" }} variant="info" size="sm" onClick={() => handleEditModal(row)}>
                               <FontAwesomeIcon icon={faEdit} />
                             </Button>
                             <Button style={{ borderColor: "black", backgroundColor: "aqua", color: "black", marginLeft: "2%" }} onClick={(e) => {
-                               dispatch(disableBill(row._id))
-                               setTimeout(() => {dispatch(getbill()).then(data => {
-                                 bills = data
-                               })}, 1000)
-                               setTimeout(() => handleFilter(), 1000)
+                              dispatch(disableBill(row._id))
+                              setTimeout(() => {
+                                dispatch(getbill()).then(data => {
+                                  bills = data
+                                })
+                              }, 1000)
+                              setTimeout(() => handleFilter(), 1000)
 
                             }}
 
@@ -929,6 +1114,30 @@ export default () => {
                 ))}
               </Form.Select>
             </Form.Group>
+{/* Tds */}
+<Form.Group className="mb-3" controlId="editHeading">
+              <Form.Label>Project</Form.Label>
+              <Form.Select value={edittds} onChange={(e) => setEdittds(e.target.value)}>
+                <option value="">Select Option</option>
+                {/* Mapping through the arr array to generate options */}
+                {tds.map((option, index) => (
+                  <option key={index} value={option}>{option}</option>
+                ))}
+              </Form.Select>
+            </Form.Group>
+
+{/* Gst */}
+<Form.Group className="mb-3" controlId="editHeading">
+              <Form.Label>Project</Form.Label>
+              <Form.Select value={editgst} onChange={(e) => setgst(e.target.value)}>
+                <option value="">Select Option</option>
+                {/* Mapping through the arr array to generate options */}
+                {gst.map((option, index) => (
+                  <option key={index} value={option}>{option}</option>
+                ))}
+              </Form.Select>
+            </Form.Group>
+
             <Form.Group className="mb-3" controlId="editHeading">
               <Form.Label>Subject</Form.Label>
             </Form.Group>
@@ -943,7 +1152,7 @@ export default () => {
                 <option value="">Select Option</option>
                 {/* Mapping through the arr array to generate options */}
                 {invoice.map((option, index) => (
-                  <option key={index} value={option._id}>{option.subject}</option>
+                  <option key={index} value={option._id}>{option._id}</option>
                 ))}
               </Form.Select>
             </Form.Group>) : (null)}
@@ -961,11 +1170,10 @@ export default () => {
               </InputGroup>
             </Form.Group>
             <Form.Group className="mb-3" controlId="editHeading">
-              
-              <Form.Label>Payment Proof</Form.Label>
-              <p>Current File:<a style={{textDecoration:"underline"}}>{editUrls[0]?.file}</a></p>
-              <InputGroup>
 
+              <Form.Label>Payment Proof</Form.Label>
+              <p>Current File:<a style={{ textDecoration: "underline" }}>{editUrls[0]?.file}</a></p>
+              <InputGroup>
                 <Form.Control
                   type="file"
                   onChange={(e) => {
@@ -975,27 +1183,26 @@ export default () => {
                   placeholder="Upload Image"
                 />
               </InputGroup>
-              
             </Form.Group>
-            {typebill=='bills'?(
+            {typebill == 'bills' ? (
               <Form.Group className="mb-3" controlId="editHeading">
-            <Form.Label>Tax Invoice</Form.Label>
-              <p>Current File:<a style={{textDecoration:"underline"}}>{editUrls[1]?.file}</a></p>
+                <Form.Label>Tax Invoice</Form.Label>
+                <p>Current File:<a style={{ textDecoration: "underline" }}>{editUrls[1]?.file}</a></p>
 
-              
-            <InputGroup>
-              <Form.Control
-                type="file"
-                onChange={(e) => {
-                  handleFileChange(e, "Invoice")
-                  setinvoi(true)
-                }}
-                placeholder="Upload Image"
-              />
-            </InputGroup>
-            </Form.Group>
-            ):(null)}
-            
+
+                <InputGroup>
+                  <Form.Control
+                    type="file"
+                    onChange={(e) => {
+                      handleFileChange(e, "Invoice")
+                      setinvoi(true)
+                    }}
+                    placeholder="Upload Image"
+                  />
+                </InputGroup>
+              </Form.Group>
+            ) : (null)}
+
 
 
           </Modal.Body>

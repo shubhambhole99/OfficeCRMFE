@@ -8,9 +8,12 @@ import DashboardOverview from "./dashboard/DashboardOverview";
 import Transactions from "./Transactions";
 import Settings from "./Settings";
 import BootstrapTables from "./tables/BootstrapTables";
+
+// Projects
 import createProject from "./Projects/createProjects";
 import viewProjects from './Projects/viewProjects';
 import Service from './Projects/editProjects';
+
 
 import Signin from "./examples/Signin";
 import Signup from "./examples/Signup";
@@ -61,9 +64,14 @@ import Servises from './Services/Servises';
 // Invoices
 import CreateInvoice from './Billing/createBills'
 import viewBills from './Billing/viewBills'
-
-// Credit
 import CreateCredit from './Billing/createCredit'
+import CreateConsolidated from './Billing/createConsolidated'
+// Format
+import CreateFormat from './format/CreateFormat';
+import Questions from './format/questions'
+
+
+
 
 import {hot} from 'react-hot-loader/root';
 
@@ -122,6 +130,8 @@ const RouteWithSidebar = ({ component: Component, ...rest }) => {
 
 const Homepage= () => (
   <Switch>
+   
+
     <RouteWithLoader exact path={Routes.Signin.path} component={Signin} />
     <RouteWithLoader exact path={Routes.Signup.path} component={Signup} />
     <RouteWithLoader exact path={Routes.ForgotPassword.path} component={ForgotPassword} />
@@ -136,9 +146,13 @@ const Homepage= () => (
     <RouteWithSidebar exact path={Routes.Transactions.path} component={Transactions} />
     <RouteWithSidebar exact path={Routes.Settings.path} component={Settings} />
     <RouteWithSidebar exact path={Routes.BootstrapTables.path} component={BootstrapTables} />
+   {/* Projects */}
     <RouteWithSidebar exact path={Routes.CreateProjects.path} component={createProject} />
     <RouteWithSidebar exact path={Routes.Motivation.path} component={viewProjects} />
     <RouteWithSidebar exact path={Routes.Service.path} component={Service} />
+    
+
+
     <RouteWithSidebar exact path={Routes.CreateTasks.path} component={createTasks} />
     <RouteWithSidebar exact path={Routes.ViewTasks.path} component={viewTasks} />
     <RouteWithSidebar exact path={Routes.Testimonial.path} component={Testimonial} />
@@ -190,6 +204,12 @@ const Homepage= () => (
     <RouteWithSidebar exact path={Routes.CreateInvoice.path} component={CreateInvoice} />
     <RouteWithSidebar exact path={Routes.CreateCredit.path} component={CreateCredit}/>
     <RouteWithSidebar exact path={Routes.viewBills.path} component={viewBills} />
+    <RouteWithSidebar exact path={Routes.createConsolidated.path} component={CreateConsolidated}/>
+
+
+    {/* Format */}
+    <RouteWithSidebar exact path={Routes.CreateFormat.path} component={CreateFormat} />
+    <RouteWithSidebar exact path={Routes.Questions.path} component={Questions} />
 
     <Redirect to={Routes.Signin.path} />
     {/* <Redirect to={Routes.DashboardOverview.path} /> */}

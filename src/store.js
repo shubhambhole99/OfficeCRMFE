@@ -8,6 +8,8 @@ import taskhistoryslice from './features/taskhistoryslice';
 import contactReducer from './features/contactslice';
 import invoiceReducer from './features/invoiceSlice';
 import billReducer from './features/billslice'
+import consolidatedReducer from './features/consolidatedSlice';
+import questionReducer from './features/questionslice';
 
 const store = configureStore({
   reducer: {
@@ -17,8 +19,9 @@ const store = configureStore({
     project:projectReducer,
     contact:contactReducer,
     invoice:invoiceReducer,
-    bill:billReducer
-
+    bill:billReducer,
+    consolidatedSlice:consolidatedReducer,
+    questionSlice:questionReducer
 
   },
 });

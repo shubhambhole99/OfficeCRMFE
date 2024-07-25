@@ -5,7 +5,7 @@ import { faHome, faQuran, faTrash, faAngleLeft, faAngleRight, faEdit } from "@fo
 import { Breadcrumb, Col, Row, Form, Card, Button, Table, Container, InputGroup, Modal, Tab, Nav } from '@themesberg/react-bootstrap';
 import { ToastContainer, toast } from 'react-toastify/dist/react-toastify.cjs.development';
 import 'react-toastify/dist/ReactToastify.css';
-import { baseurl } from "../../api";
+import { baseurl,ProjectStatus,banknames,toi } from "../../api";
 import { triggerFunction, getPredefinedUrl } from '../../components/SignedUrl';
 import { useHistory } from 'react-router-dom';
 import { check } from '../../checkloggedin'
@@ -13,6 +13,7 @@ import Multiselect from "../../components/Multiselect";
 import { useDispatch, useSelector } from "react-redux";
 import { getcontacts } from "../../features/contactslice";
 import { getinvoice } from "../../features/invoiceSlice"
+import { fetchProjects } from "../../features/projectslice";
 
 
 export default () => {
@@ -86,10 +87,10 @@ export default () => {
 
  
   const [paymentproof,setPaymentproof]=useState(false)
-  const handleFileChange = (event,tp) => {
+  const handleFileChange = async (event,tp) => {
     const files = event.target.files;
     const newSelectedFiles = [];
-    console.log(tp)
+    //////////console.log(tp)
     for (let i = 0; i < files.length; i++) {
       
       const file = files[i];
@@ -100,7 +101,7 @@ export default () => {
         setSelectedFile(file);
         setFileExtension(fileExtension);
         const desiredContact = contacts.find(contact => contact._id == person);
-        const arr1 = triggerFunction(fileExtension, desiredContact.name);
+        const arr1 = await triggerFunction(fileExtension, desiredContact.name);
 
         // Add arr1[0] and arr1[1] to the newSelectedFiles array
         newSelectedFiles.push([arr1[0], arr1[1], file]);
@@ -120,7 +121,7 @@ export default () => {
     
 
     // Check the result
-    console.log(selectedFiles);
+    //////////console.log(selectedFiles);
   };
 
 
@@ -131,7 +132,7 @@ export default () => {
 
     let urls = []
     for (let i = 0; i < selectedFiles.length; i++) {
-      // //////////console.log("hi")
+      // ////////////////////console.log("hi")
       let selectedFile = selectedFiles[i][2]
       const url = getPredefinedUrl(selectedFiles[i][1]);
 
@@ -141,15 +142,15 @@ export default () => {
       }
 
       if (selectedFile != null) {
-        // ////console.log("hi",selectedFile)
+        // //////////////console.log("hi",selectedFile)
         const reader = new FileReader();
         reader.onload = async (event) => {
           const fileContent = event.target.result;
           // urls.push(getPredefinedUrl(selectedFiles[i][1]))
           // Perform your upload logic here
           // For demonstration, let's just log the file extension and content
-          //////////console.log('Selected File Extension:', fileExtension);
-          //////////console.log('File Content:', fileContent);
+          ////////////////////console.log('Selected File Extension:', fileExtension);
+          ////////////////////console.log('File Content:', fileContent);
 
           try {
             // Example: Uploading file content using Fetch
@@ -186,7 +187,7 @@ export default () => {
 
     try {
       const uniqueUrls = Array.from(uniqueUrlsSet);
-      ////console.log(uniqueUrls);
+      //////////////console.log(uniqueUrls);
       let uniqueUrlsObjects=[]
       if(uniqueUrls.length==1){
         uniqueUrlsObjects.push({file:uniqueUrls[0],name:"Payment Proof"})
@@ -214,23 +215,24 @@ export default () => {
         bank:bankaccount
 
       };
+      // //console.log(body)
 
      
      
       const responseFormData = await axios.post(`${baseurl}/income/create`,body);
-      //////////console.log(responseFormData);
-      // toast.success('Task added successfully'); // Call toast.success after successful addition
-      setPerson("");
-      setCompanyName("");
-      setcredittype("");
-      setbankaccount("");
-      setCreateDate("");
-      setIsActive("");
-      setPname("");
-      setInvoice("");
-      setSubject("");
-      setAmount("");
-      setDescription("")
+      ////////////////////console.log(responseFormData);
+      toast.success('Bill added successfully'); // Call toast.success after successful addition
+      // setPerson("");
+      // setCompanyName("");
+      // setcredittype("");
+      // setbankaccount("");
+      // setCreateDate("");
+      // setIsActive("");
+      // setPname("");
+      // setInvoice("");
+      // setSubject("");
+      // setAmount("");
+      // setDescription("")
       setPaymentproof(false)
       setSelectedFiles([])
     } catch (error) {
@@ -247,27 +249,23 @@ export default () => {
   ////////////////////////////////////////////
 
   const handleprojectFetch = async () => {
-    //////////console.log(companyname)
-    let body = {
-      company: companyname ? companyname : null,
-      status: isActive ? isActive : null
-    }
-    //////////console.log(body)
-    await axios.put(`${baseurl}/project/`, body)
-      .then(response => {
-        setPnamearr(response.data);
-        //////////console.log(response.data)
-      })
-      .catch(error => {
-        //console.error(error);
-      });
+    ////////////////////console.log(companyname)
+    dispatch(fetchProjects({
+      company:companyname?companyname:null,
+      status:isActive?isActive:null
+    })).then((resp)=>{
+      setPnamearr(resp)
+      // ////////console.log(resp)
+    }).catch(error=>{
+
+    })
 
   }
 
 
   //For Fetching Users and Projects
   useEffect(() => {
-    //////////console.log(check())
+    ////////////////////console.log(check())
     axios.get(`${baseurl}/user`)
       .then(response => {
         setUsers(response.data);
@@ -281,8 +279,8 @@ export default () => {
     dispatch(getcontacts())
     dispatch(getinvoice())
     setInvoices(invoices)
-    //////console.log(contacts)
-    console.log(invoices)
+    ////////////////console.log(contacts)
+    //////////console.log(invoices)
   }, [contacts.length, invoices.length]);
 
 
@@ -292,13 +290,13 @@ export default () => {
       (person==""||item.person==person)&&
       (pname==""||item.project==pname)
   ))
-    console.log(person,invoices1)
+    //////////console.log(person,invoices1)
     // for(let i=0;i<invoices1.length;i++){
     //   if(invoices1[i].person==pid){
-    //     console.log(invoices1[i])
+    //     //////////console.log(invoices1[i])
     //   }
     // }
-    // console.log(invoices1,temp)
+    // //////////console.log(invoices1,temp)
       setInvoices(temp)
   }
 
@@ -316,7 +314,7 @@ export default () => {
       }
     })
       .then(response => {
-        //////////console.log('Record deleted successfully:', response.data);
+        ////////////////////console.log('Record deleted successfully:', response.data);
         setData(prevData => prevData.filter(item => item.id !== id));
         toast.success('Record deleted successfully'); // Display success toast
       })
@@ -357,7 +355,6 @@ export default () => {
     history.push(`/projects/${id}`)
   }
 
-  const banknames=['Misc','Bandhan-20100018657972','Bharat-612100014610','Bharat-610100084505','DNS-29010100001263','HDFC-1451050122678','HDFC-501000174801181']
 
   let startIndex = currentPage * itemsPerPage;
   let endIndex = (currentPage + 1) * itemsPerPage;
@@ -436,8 +433,9 @@ export default () => {
                             setcredittype(e.target.value)
                           }}>
                             <option value="">Select Option</option>
-                            <option value="Fees">Fees</option>
-                            <option value="Services">Services</option>
+                            {toi.map((option, index) => (
+                              <option key={index} value={option}>{option}</option>
+                            ))}
                           </Form.Select>
                         </InputGroup>
                       </Form.Group>
@@ -477,9 +475,11 @@ export default () => {
                             setIsActive(e.target.value)
                             handleprojectFetch()
                           }}>
-                            <option value="">Select Option</option>
-                            <option value="Active">Active</option>
-                            <option value="Inactive">Inactive</option>
+                             <option value="">Select Option</option>
+                            {/* Mapping through the arr array to generate options */}
+                            {ProjectStatus.map((option, index) => (
+                              <option key={index} value={option}>{option}</option>
+                            ))}
                           </Form.Select>
                         </InputGroup>
                       </Form.Group>

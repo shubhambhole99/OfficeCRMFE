@@ -1,5 +1,5 @@
 
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import SimpleBar from 'simplebar-react';
 import { useLocation } from "react-router-dom";
 import { CSSTransition } from 'react-transition-group';
@@ -13,17 +13,17 @@ import ThemesbergLogo from "../assets/img/themesberg.svg";
 import ReactHero from "../assets/img/technologies/react-hero-logo.svg";
 import ProfilePicture from "../assets/img/team/profile-picture-3.jpg";
 import { faPhoenixFramework } from "@fortawesome/free-brands-svg-icons";
-import {check} from '../checkloggedin.js';
+import { check } from '../checkloggedin.js';
 
 export default (props = {}) => {
-  
+
   const location = useLocation();
   const { pathname } = location;
   const [show, setShow] = useState(false);
   const showClass = show ? "show" : "";
   let history = useHistory();
-  const permission=check()[3]
-  //////////console.log(permission,"object")
+  const permission = check()[3]
+  //////////////////console.log(permission,"object")
 
   const onCollapse = () => setShow(!show);
 
@@ -102,7 +102,7 @@ export default (props = {}) => {
             <Nav className="flex-column pt-3 pt-md-0">
               <NavItem title="Bhole Consultants" link={Routes.DashboardOverview.path} image={ReactHero} />
 
-             
+
               {/* <NavItem title="Sign In" link={Routes.Signin.path}  icon={faSignInAlt}/>
                <NavItem title="Sign Up" link={Routes.Signup.path} icon={faSignLanguage} /> */}
               {/* <NavItem external title="Messages" link="https://demo.themesberg.com/volt-pro-react/#/messages" target="_blank" badgeText="Pro" icon={faInbox} />
@@ -110,12 +110,13 @@ export default (props = {}) => {
               <NavItem title="Settings" icon={faCog} link={Routes.Settings.path} />
               <NavItem external title="Calendar" link="https://demo.themesberg.com/volt-pro-react/#/calendar" target="_blank" badgeText="Pro" icon={faCalendarAlt} />
               <NavItem external title="Map" link="https://demo.themesberg.com/volt-pro-react/#/map" target="_blank" badgeText="Pro" icon={faMapPin} /> */}
-                  {permission.canViewProjects?(<CollapsableNavItem eventKey="Home/" title="Projects" icon={faHome}>
-               <NavItem title=" Create Projects" link={Routes.CreateProjects.path} />
+              {permission.canViewProjects ? (<CollapsableNavItem eventKey="Home/" title="Projects" icon={faHome}>
+                <NavItem title=" Create Projects" link={Routes.CreateProjects.path} />
+               
+
                 {/* <NavItem title=" View Projects" link={Routes.Motivation.path} /> */}
                 {/* <NavItem title=" Service" link={Routes.Service.path} /> */}
-              </CollapsableNavItem>):(null)}
-              
+              </CollapsableNavItem>) : (null)}
 
               <CollapsableNavItem eventKey="examples/" title="Tasks" icon={faInfo}>
 
@@ -125,39 +126,48 @@ export default (props = {}) => {
                 {/* <NavItem title="Testimonial" link={Routes.Testimonial.path} /> */}
               </CollapsableNavItem>
 
-            
+
 
 
               <CollapsableNavItem eventKey="examples/" title="Contacts" icon={faPhone}>
 
 
-              <NavItem title="Add Contact" link={Routes.Contact.path} icon={faInfo}/>
-              <NavItem title="View Contact" link={Routes.ViewContacts.path} icon={faInfo}/>
-              {/* <NavItem title="Testimonial" link={Routes.Testimonial.path} /> */}
+                <NavItem title="Add Contact" link={Routes.Contact.path} icon={faInfo} />
+                <NavItem title="View Contact" link={Routes.ViewContacts.path} icon={faInfo} />
+                {/* <NavItem title="Testimonial" link={Routes.Testimonial.path} /> */}
               </CollapsableNavItem>
 
-              
+
               <CollapsableNavItem eventKey="examples/" title="Billing" icon={faFileAlt}>
 
 
-              <NavItem title="Create Invoice" link={Routes.CreateInvoice.path} icon={faInfo}/>
-              <NavItem title="Create Credit" link={Routes.CreateCredit.path} icon={faInfo}/>
-              <NavItem title="View Bills" link={Routes.viewBills.path} icon={faInfo}/>
-              {/* <NavItem title="Testimonial" link={Routes.Testimonial.path} /> */}
+                <NavItem title="Create Invoice" link={Routes.CreateInvoice.path} icon={faInfo} />
+                <NavItem title="Create Credit" link={Routes.CreateCredit.path} icon={faInfo} />
+                <NavItem title="View Bills" link={Routes.viewBills.path} icon={faInfo} />
+                <NavItem title="Consolidated" link={Routes.createConsolidated.path} icon={faInfo} />
+                {/* <NavItem title="Testimonial" link={Routes.Testimonial.path} /> */}
               </CollapsableNavItem>
 
 
+              <CollapsableNavItem eventKey="examples/" title="Format" icon={faBook}>
 
-              
+
+                <NavItem title="Create Format" link={Routes.CreateFormat.path} icon={faBoxOpen} />
+                {/* <NavItem title="Testimonial" link={Routes.Testimonial.path} /> */}
+                <NavItem title=" Create Q&A" link={Routes.Questions.path} icon={faBoxOpen} />
+
+              </CollapsableNavItem>
 
 
               <CollapsableNavItem eventKey="examples/" title="Correspondence" icon={faBook}>
 
 
-              <NavItem title="Add" link={Routes.CreateNode.path} icon={faBoxOpen}/>
-              <NavItem title="View Contact" link={Routes.ViewContacts.path} icon={faChartPie}/>
-              {/* <NavItem title="Testimonial" link={Routes.Testimonial.path} /> */}
+                <NavItem title="Add" link={Routes.CreateNode.path} icon={faBoxOpen} />
+                <NavItem title="View Contact" link={Routes.ViewContacts.path} icon={faChartPie} />
+                {/* <NavItem title="Testimonial" link={Routes.Testimonial.path} /> */}
               </CollapsableNavItem>
+
+
 
               {/* <NavItem external title="Plugins" link="https://demo.themesberg.com/volt-pro-react/#/plugins/datatable" target="_blank" badgeText="Pro" icon={faChartPie} /> */}
 
@@ -168,7 +178,7 @@ export default (props = {}) => {
               {/* <CollapsableNavItem eventKey="examples/" title="Service" icon={faPhoenixFramework}>
                 <NavItem title="Our Service" link={Routes.Services.path} />
               </CollapsableNavItem> */}
-  
+
               {/* <NavItem external title="Themesberg" link="https://themesberg.com" target="_blank" image={ThemesbergLogo} /> */}
               <Button onClick={() => {
                 localStorage.removeItem('token');

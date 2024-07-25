@@ -19,7 +19,7 @@ const datasSlice = createSlice({
       state.error = null;
     },
     fetchDataSuccess(state, action) {
-        // ////////console.log(action.payload)
+        // ////////////////console.log(action.payload)
       state.bills = action.payload;
       state.loading = false;
     },
@@ -32,13 +32,15 @@ const datasSlice = createSlice({
 
 export const { fetchDataStart, fetchDataSuccess, fetchDataFailure } = datasSlice.actions;
 
-export const getbill = (body) => async (dispatch) => {
+export const getbill = (bool) => async (dispatch) => {
   dispatch(fetchDataStart());
   try {
-    ////console.log(body)
-
-    const response = await axios.put(`${baseurl}/income/`);
-    ////console.log(response.data,"billlllllllllllllllllllllllls")
+    let body={
+      isDisabled:bool
+    }
+    
+    const response = await axios.put(`${baseurl}/income/`,body);
+    ////////////console.log(response.data,"billlllllllllllllllllllllllls")
     // initialState.bills=response.data.data
     dispatch(fetchDataSuccess(response.data.data));
     // resolve(response.data.data)
@@ -46,15 +48,15 @@ export const getbill = (body) => async (dispatch) => {
     return response.data.data
     
   } catch (error) {
-    ////////console.log(error)
+    ////////////////console.log(error)
     dispatch(fetchDataFailure(error.message));
   }
 };
 
 export const disableBill = (body) => async (dispatch) => {
-  console.log(body)
+  ////////console.log(body)
   try {
-    ////console.log(body)
+    ////////////console.log(body)
 
     const response = await axios.delete(`${baseurl}/income/${body}`);
     

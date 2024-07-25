@@ -9,3 +9,11 @@ Fix Edit
     // "start": "react-scripts --openssl-legacy-provider start",
 
 use older react-redux version "react-redux": "^7.2.8",
+
+
+--Invoice
+onchange file after submitting doesnt go
+
+
+All sections should have isDisabled and previous Urls
+All sections should have 100 width on mobile

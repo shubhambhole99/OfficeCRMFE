@@ -34,18 +34,18 @@ export default () => {
     };
 
     try {
-      //////////console.log(baseurl,requestData)
+      //////////////////console.log(baseurl,requestData)
       const response = await axios.post(`${baseurl}/user/login`, requestData);
       const token = response.data.token;
-      //////////console.log(response);
+      //////////////////console.log(response);
       toast.success('Login Successfully');
 
       localStorage.setItem('token', token);
-      //////////console.log(token);
+      //////////////////console.log(token);
 
       setEmail('');
       setPassword('');
-      //////////console.log(check())
+      //////////////////console.log(check())
       history.push('/dashboard/overview');
     } catch (error) {
       //console.error('Error:', error);

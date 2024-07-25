@@ -80,9 +80,9 @@
 //         next:next||undefined,
 //         description: message||undefined,
 //       };
-//       ////////console.log(body)
+//       ////////////////console.log(body)
 //     axios.post(`${baseurl}/correspondence`,body).then(res=>{
-//         ////////console.log(res)
+//         ////////////////console.log(res)
 //     }
 //     ).catch(error=>{
 
@@ -90,7 +90,7 @@
 
     
 //     //  const response = await axios.post(`${baseurl}/contact/create`, body);
-//     //  ////////console.log(response.data)
+//     //  ////////////////console.log(response.data)
 //       toast.success('Contact added successfully'); 
 //     } catch (error) {
 //       console.error(error);
@@ -103,16 +103,16 @@
 //   ////////////////////////////////////////////
 
 //   const handleprojectFetch=async()=>{
-//     //////////console.log(companyname)
+//     //////////////////console.log(companyname)
 //     let body={
 //       company:companyname?companyname:null,
 //       status:isActive?isActive:null
 //     }
-//     //////////console.log(body)
+//     //////////////////console.log(body)
 //     await axios.put(`${baseurl}/project/`,body)
 //     .then(response => {
 //       setPnamearr(response.data);
-//       // ////////console.log(response.data)
+//       // ////////////////console.log(response.data)
 //     })
 //     .catch(error => {
 //       //console.error(error);
@@ -123,7 +123,7 @@
 
 //   //For Fetching Users and Projects
 //   useEffect(() => {
-//    //////////console.log(check())
+//    //////////////////console.log(check())
 //    axios.get(`${baseurl}/user`)
 //    .then(response => {
 //      setUsers(response.data);
@@ -135,7 +135,7 @@
 // //   Fetching all the correspondence
     
 
-//     //   ////////console.log(pnamearr)
+//     //   ////////////////console.log(pnamearr)
 //   }, []);
 
   
@@ -304,7 +304,7 @@ export default () => {
 
   const handleUpload=()=>{
 for(let i=0;i<selectedFiles.length;i++){
-    ////////console.log(allfilextensions[i])
+    ////////////////console.log(allfilextensions[i])
     const selectedFile=selectedFiles[i]
     if (selectedFile) {
         const reader = new FileReader();
@@ -312,8 +312,8 @@ for(let i=0;i<selectedFiles.length;i++){
           const fileContent = event.target.result;
           // Perform your upload logic here
           // For demonstration, let's just log the file extension and content
-          //////////console.log('Selected File Extension:', fileExtension);
-          //////////console.log('File Content:', fileContent);
+          //////////////////console.log('Selected File Extension:', fileExtension);
+          //////////////////console.log('File Content:', fileContent);
       
           try {
             // Example: Uploading file content using Fetch
@@ -329,7 +329,7 @@ for(let i=0;i<selectedFiles.length;i++){
               throw new Error('Network response was not ok');
             }
     
-            ////////console.log('File uploaded successfully:', responseFile);
+            ////////////////console.log('File uploaded successfully:', responseFile);
           }catch (error) {
               //console.error('Error:', error);
             //   toast.error('Failed to add image'); // Display error toast if addition fails
@@ -339,7 +339,7 @@ for(let i=0;i<selectedFiles.length;i++){
         reader.readAsArrayBuffer(selectedFile);
             }
         }
-    ////////console.log("HI")
+    ////////////////console.log("HI")
   }
 
 //   create new functionality

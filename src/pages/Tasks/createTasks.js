@@ -5,12 +5,13 @@ import { faHome, faQuran, faTrash, faAngleLeft, faAngleRight, faEdit } from "@fo
 import { Breadcrumb, Col, Row, Form, Card, Button, Table, Container, InputGroup, Modal, Tab , Nav} from '@themesberg/react-bootstrap';
 import { ToastContainer, toast } from 'react-toastify/dist/react-toastify.cjs.development';
 import 'react-toastify/dist/ReactToastify.css';
-import {baseurl} from "../../api";
+import {baseurl,ProjectStatus} from "../../api";
+import { useSelector, useDispatch } from 'react-redux';
 import {triggerFunction,getPredefinedUrl} from '../../components/SignedUrl';
 import { useHistory } from 'react-router-dom';
 import {check} from '../../checkloggedin'
 import Multiselect from "../../components/Multiselect";
-
+import { fetchProjects } from "../../features/projectslice";
 
 export default () => {
 
@@ -45,7 +46,7 @@ export default () => {
 
    let history = useHistory();
 
-
+   const dispatch = useDispatch();
    // for this file only
   const [users,setUsers]=useState([])
   const [username,setUsername]=useState('')
@@ -65,14 +66,14 @@ export default () => {
   let [isActives,setIsActives]=useState(null)
 
   
-  const handleFileChange = (event) => {
+  const handleFileChange = async (event) => {
     const file = event.target.files[0];
     if (file) {
       // Read file extension
       const fileExtension = file.name;
       setSelectedFile(file);
       setFileExtension(fileExtension);
-      let arr1=triggerFunction(fileExtension, folderName)
+      let arr1=await triggerFunction(fileExtension, folderName)
       setUrl(arr1[0]); // Update URL with folderName
       setKey(arr1[1])
       setIsFileSelected(true); // Enable upload button
@@ -85,16 +86,16 @@ export default () => {
 
   const handleUpload = () => {
     
-    // //////////console.log("hi")
+    // //////////////////console.log("hi")
     if(selectedFile!=null){
-      //////////console.log("hi",selectedFile)
+      //////////////////console.log("hi",selectedFile)
     const reader = new FileReader();
     reader.onload = async (event) => {
       const fileContent = event.target.result;
       // Perform your upload logic here
       // For demonstration, let's just log the file extension and content
-      //////////console.log('Selected File Extension:', fileExtension);
-      //////////console.log('File Content:', fileContent);
+      //////////////////console.log('Selected File Extension:', fileExtension);
+      //////////////////console.log('File Content:', fileContent);
   
       try {
         // Example: Uploading file content using Fetch
@@ -110,7 +111,7 @@ export default () => {
         if (!responseFile.ok) {
           throw new Error('Network response was not ok');
         }
-        //////////console.log('File uploaded successfully:', responseFile);
+        //////////////////console.log('File uploaded successfully:', responseFile);
         }
        
         toast.success('Image added successfully'); // Call toast.success after successful addition
@@ -139,7 +140,7 @@ export default () => {
         taskDescription: taskdescription,
         taskUrl: selectedFile? getPredefinedUrl(key):"hello"
       };
-      //////////console.log(body)
+      //////////////////console.log(body)
       // Example: Posting additional form data using Axios
       // const responseFormData = await axios.post(`${baseurl}/project/create`,body, {
       //   headers: {
@@ -148,7 +149,7 @@ export default () => {
       //   },
       // });
       const responseFormData = await axios.post(`${baseurl}/task/create`, body);
-      //////////console.log(responseFormData);
+      //////////////////console.log(responseFormData);
       toast.success('Task added successfully'); // Call toast.success after successful addition
       // window.location.reload()
       setSelectedFile(null)
@@ -165,27 +166,24 @@ export default () => {
   ////////////////////////////////////////////
 
   const handleprojectFetch=async()=>{
-    //////////console.log(companyname)
-    let body={
+    //////////////////console.log(companyname)
+    
+    dispatch(fetchProjects({
       company:companyname?companyname:null,
       status:isActive?isActive:null
-    }
-    //////////console.log(body)
-    await axios.put(`${baseurl}/project/`,body)
-    .then(response => {
-      setPnamearr(response.data);
-      //////////console.log(response.data)
+    })).then((resp)=>{
+      setPnamearr(resp)
+      // //////console.log(resp)
+    }).catch(error=>{
+
     })
-    .catch(error => {
-      //console.error(error);
-    });
 
   }
 
 
   //For Fetching Users and Projects
   useEffect(() => {
-   //////////console.log(check())
+   //////////////////console.log(check())
    axios.get(`${baseurl}/user`)
    .then(response => {
      setUsers(response.data);
@@ -220,7 +218,7 @@ export default () => {
       }
     })
       .then(response => {
-        //////////console.log('Record deleted successfully:', response.data);
+        //////////////////console.log('Record deleted successfully:', response.data);
         setData(prevData => prevData.filter(item => item.id !== id));
         toast.success('Record deleted successfully'); // Display success toast
       })
@@ -277,7 +275,7 @@ export default () => {
           Authorization: `${token}`
         }
       });
-      //////////console.log('Updated data:', response.data);
+      //////////////////console.log('Updated data:', response.data);
       toast.success('Data updated successfully');
       setShowModal(false);
       setData(prevData => prevData.map(item => item._id === editItemId ? { ...item, ...editData } : item));
@@ -351,9 +349,11 @@ export default () => {
                 setIsActive(e.target.value)
                 handleprojectFetch()
                 }}>
-                  <option value="">Select Option</option>
-                  <option value="Active">Active</option>
-                  <option value="Inactive">Inactive</option>
+                 <option value="">Select Option</option>
+                            {/* Mapping through the arr array to generate options */}
+                            {ProjectStatus.map((option, index) => (
+                              <option key={index} value={option}>{option}</option>
+                            ))}
                 </Form.Select>
               </InputGroup>
             </Form.Group>

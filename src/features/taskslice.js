@@ -21,7 +21,7 @@ const dataSlice = createSlice({
       state.error = null;
     },
     fetchDataSuccess(state, action) {
-        ////////console.log("state,action")
+        ////////////////console.log("state,action")
       state.data = action.payload;
       state.loading = false;
     },
@@ -35,11 +35,11 @@ const dataSlice = createSlice({
 export const { fetchDataStart, fetchDataSuccess, fetchDataFailure } = dataSlice.actions;
 
 export const deletetasks = (data) => async (dispatch) => {
-////////console.log(data)
+////////////////console.log(data)
   dispatch(fetchDataStart());
   try {
     const token = localStorage.getItem('token');
-    // //////console.log(token)
+    // //////////////console.log(token)
     const response = await axios.delete(`${baseurl}/task/${data}`,{
       headers: {
         Authorization: `${token}`

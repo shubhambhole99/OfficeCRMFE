@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Breadcrumb, Col, Row, Form, Card, Button, Table, Container, InputGroup, Modal, Tab, Nav } from '@themesberg/react-bootstrap';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import {baseurl} from "../../api";
+import {baseurl,ProjectStatus} from "../../api";
 import { triggerFunction, getPredefinedUrl } from '../../components/SignedUrl';
 import { useHistory } from 'react-router-dom';
 import { check } from '../../checkloggedin';
@@ -18,6 +18,7 @@ import { deletetasks } from "../../features/taskslice";
 import {addtaskhistory} from "../../features/taskhistoryslice";
 import AddTaskHistory from "../components/AddTaskHistory";
 import ViewTaskHistory from "../components/ViewTaskHistory";
+import { fetchProjects } from "../../features/projectslice";
 
 export default () => {
   const [pname, setPname] = useState('');
@@ -49,7 +50,10 @@ export default () => {
   //view add History
   const [texthistory,setaddtexthistory]=useState("")
   const [showModal2,setShowModal2]=useState(false);
- 
+
+  //Created Option 
+  let [createdoption, setCreatedoption] = useState(0)
+
 // common for all
   const dispatch = useDispatch();
 
@@ -57,7 +61,7 @@ export default () => {
   const {user1,loading,error}=useSelector((state) => state.users);
  
   useEffect(() => {
-    // //////console.log(user)
+    // //////////////console.log(user)
     (async () =>{
     const response = await axios.put(`${baseurl}/task/filter`, {
       projectid: pname || undefined,
@@ -65,44 +69,31 @@ export default () => {
       taskCompleted: taskstatus || undefined
     });
     setData(response.data);
-    // dispatch(fetchAsyncData()).then(result=>{
-    //   setUsers(result);
-    // }).catch(err=>{
-    //   // //////console.log(err)
-    // })
   })()
   dispatch(fetchAsyncData())
   if(user1.length!=0){
-    // //////console.log("once")
+    // //////////////console.log("once")
     setUsers(user1)
   }
-  // setUsers(user1)
-  // //////console.log(loading)
   handleprojectFetch()
-    // handleFetch()
   }, [user1.length]);
 
 
 
   const handleprojectFetch=async()=>{
-    ////////console.log(companyname)
-    let body={
+    ////////////////console.log(companyname)
+    dispatch(fetchProjects({
       company:companyname?companyname:null,
       status:isActive?isActive:null
-    }
-    ////////console.log(body)
-    await axios.put(`${baseurl}/project/`,body)
-    .then(response => {
-      setPnamearr(response.data);
-      // ////////console.log(response.data)
-    })
-    .catch(error => {
-      //console.error(error);
-    });
+    })).then((resp)=>{
+      setPnamearr(resp)
+      //////console.log(resp)
+    }).catch(error=>{
 
+    })
   }
   const findprojectname=(id)=>{
-    ////////console.log(id,pnamearr)
+    ////////////////console.log(id,pnamearr)
     for(let i=0;i<pnamearr.length;i++){
       if(pnamearr[i]._id===id){
         return pnamearr[i].name
@@ -120,7 +111,7 @@ export default () => {
         taskCompleted: taskstatus || undefined
       });
       setData(response.data);
-      ////console.log(response.data)
+      //////console.log(response.data)
 
     } catch (error) {
       //console.error(error);
@@ -165,7 +156,7 @@ export default () => {
       });
   };
   const handleEditModal = (item) => {
-    ////////console.log(item)
+    ////////////////console.log(item)
     let temp=[]
     let tempuser=item.assignTaskTo
     for(let j=0;j<users.length;j++){
@@ -176,7 +167,7 @@ export default () => {
         })
       }
     }
-    ////////console.log(temp,"hi")
+    ////////////////console.log(temp,"hi")
   seteditTaskid(item._id)
   setEditassignTaskTo(temp)
   setEditprojectname(item.projectid)
@@ -187,7 +178,7 @@ export default () => {
   }
 
   const handleEditSubmit=async()=>{
-    ////////console.log(taskid,"chekcing task id")
+    ////////////////console.log(taskid,"chekcing task id")
     const token = localStorage.getItem('token');
     let temp=[]
     for(let i=0;i<editassignTaskTo.length;i++){
@@ -199,7 +190,7 @@ export default () => {
       taskDescription: edittaskDescription,
       taskSubject: edittaskSubject
     };
-    ////////console.log(editData)
+    ////////////////console.log(editData)
 
     try {
       const response = await axios.put(`${baseurl}/task/${taskid}`, editData, {
@@ -207,7 +198,7 @@ export default () => {
           Authorization: `Bearer ${token}`
         }
       });
-      ////////console.log(response.data);
+      ////////////////console.log(response.data);
       toast.success("Task updated successfully");
       setShowModal(false);
       setEditMode(false);
@@ -223,7 +214,7 @@ export default () => {
   }
 
   const handletaskhistory=async (row)=>{
-    ////////console.log("hi")
+    ////////////////console.log("hi")
     try{
       // fetching all Histories of one task
       let response=await axios.get(`${baseurl}/history/${row._id}`)
@@ -232,13 +223,13 @@ export default () => {
       for(let i=0;i<response.data.length;i++){
       let res=await axios.get(`${baseurl}/history/single/${(response.data)[i]._id}`)
       temp.push(res.data)
-      ////////console.log(temp)
+      ////////////////console.log(temp)
       }
       setHistory(temp)
       
    
     }catch(error){
-      ////////console.log(error)
+      ////////////////console.log(error)
     }
    
     
@@ -247,7 +238,7 @@ export default () => {
   }
 
   const handleaddhistory=async (row)=>{
-    // //////console.log(row._id)
+    // //////////////console.log(row._id)
     seteditTaskid(row._id)
     setShowModal2(true)
     // dispatch(addtaskhistory("hi"))
@@ -268,7 +259,32 @@ export default () => {
 const istTime = utcTime.toLocaleString('en-IN', {timeZone: 'Asia/Kolkata'});
 return (istTime);
   }
-  
+  const sortbycreatedby = () => {
+    let temp = createdoption + 1
+    setCreatedoption(temp)
+    //console.log(temp)
+    if (temp == 3) {
+     
+      setCreatedoption(1)
+      temp = 1
+    }
+
+    let sortedData = []
+    for (let i = 0; i < data.length; i++) {
+      sortedData[i] = data[i]
+    }
+    //console.log(sortedData)
+    if (temp == 1) {
+      sortedData.sort((a, b) => new Date(a.CreatedAt) - new Date(b.CreatedAt));
+      setData(sortedData)
+    }
+    if (temp == 2) {
+      sortedData = data.sort((a, b) => new Date(b.CreatedAt) - new Date(a.CreatedAt));
+      setData(sortedData)
+    }
+  }
+
+
 
   
   return (
@@ -302,9 +318,11 @@ return (istTime);
                 setIsActive(e.target.value)
                 handleprojectFetch()
                 }}>
-                  <option value="">Select Option</option>
-                  <option value="Active">Active</option>
-                  <option value="Inactive">Inactive</option>
+                   <option value="">Select Option</option>
+                            {/* Mapping through the arr array to generate options */}
+                            {ProjectStatus.map((option, index) => (
+                              <option key={index} value={option}>{option}</option>
+                            ))}
                 </Form.Select>
               </InputGroup>
             </Form.Group>
@@ -316,9 +334,10 @@ return (istTime);
                 <InputGroup.Text></InputGroup.Text>
                 <Form.Select value={pname} onChange={(e) => setPname(e.target.value)}>
                   <option value="">Select Option</option>
-                  {pnamearr.map((option, index) => (
+                  pnamearr
+                  {pnamearr!=undefined ? pnamearr.map((option, index) => (
                     <option key={index} value={option._id}>{option.name}</option>
-                  ))}
+                  )) : null}
                 </Form.Select>
               </InputGroup>
             </Form.Group>
@@ -376,9 +395,11 @@ return (istTime);
           <Table responsive className="align-items-center table-flush">
             <thead className="thead-light">
               <tr>
-                <th  scope="col">#</th>
+              <th scope="col" className="unselectable" style={{ cursor: "pointer" }} onClick={sortbycreatedby}>Created At</th>
+
+                
                 <th scope="col">Project Name</th>
-                <th scope="col">CreatedAt</th>
+
                 <th scope="col">Task Subject</th>
                 <th scope="col">Task Description</th>
                 <th scope="col">Assigned to</th>
@@ -395,9 +416,9 @@ return (istTime);
                     const projectName = findprojectname(row.projectid);
                     return projectName ? (
                       <tr key={index}>
-                        <td>{index + 1}</td>
-                        <td style={{ cursor: "pointer" }} onClick={() => handletaskhistory(row)}>{projectName}</td>
                         <td style={{ whiteSpace: "pre-wrap" }}>{timeinIndia(row.CreatedAt)}</td>
+                        
+                        <td style={{ cursor: "pointer" }} onClick={() => handletaskhistory(row)}><p><span style={{position:"relative",top:"10px",border:"4px solid cyan",borderRadius:"200px",fontWeight:"700"}}>{row.nooftask}</span>{projectName}</p></td>
                         <td style={{ whiteSpace: "pre-wrap" }}>{row.taskSubject}</td>
                         <td style={{ whiteSpace: "pre-wrap" }}><pre style={{ whiteSpace: "pre-wrap" }}>{row.taskDescription}</pre></td>
                         <td style={{ whiteSpace: "pre-wrap" }}>{getUsernameById(row.assignTaskTo)}</td>
@@ -436,7 +457,7 @@ return (istTime);
                         </Modal.Header>
                         <Modal.Body>
                        
-                          <Form.Group className="mb-3" controlId="editDescription">
+                          {/* <Form.Group className="mb-3" controlId="editDescription">
                               <Form.Label>Project name</Form.Label>
                     <Form.Select required value={editprojectname} onChange={(e) => setEditprojectname(e.target.value)}>
                           <option value="">Select Option</option>
@@ -445,7 +466,7 @@ return (istTime);
                               <option key={index} value={option._id}>{option.name}</option>
                             ))}
                           </Form.Select>
-                          </Form.Group>
+                          </Form.Group> */}
                           <Form.Group className="mb-3" controlId="editHeading">
                               <Form.Label>Task Description</Form.Label>
                               <textarea rows="4" cols="50" type="text" value={edittaskDescription} onChange={(e) => setEdittaskDescription(e.target.value)} />

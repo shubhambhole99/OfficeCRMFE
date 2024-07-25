@@ -1,4 +1,6 @@
 // const jwt = require('jsonwebtoken');
+import axios from "axios";
+import { baseurl, ProjectStatus } from "./api";
 const check=()=>{
     const token = localStorage.getItem('token');
 
@@ -14,7 +16,7 @@ const check=()=>{
       const userId = payload.userId;
       const username = payload.username;
       const role=payload.role
-      //////////console.log(role)
+      //////////////////console.log(role)
       const userPermissions = {
         canViewProjects: true,
         canCreateTasks: true,
@@ -26,15 +28,30 @@ const check=()=>{
         canViewTasks: true, // Example of a permission that the user doesn't have
       };
       const permission=role=='user'?userPermissions:adminPermissions
-      //////////console.log(userId)
+      //////////////////console.log(userId)
       // You can use the extracted details as needed
-      return [userId,username,role,permission]
-      //////////console.log("User ID:", userId);
-      //////////console.log("Username:", username);
+      return [userId,username,role,permission,token]
+      //////////////////console.log("User ID:", userId);
+      //////////////////console.log("Username:", username);
     } else {
-      //////////console.log("Token not found in local storage");
+      //////////////////console.log("Token not found in local storage");
     }
 
 }
-  
-export { check };
+const checkloginvailidity=async ()=>{
+//console.log(check())
+let body={
+  id:check()[4]
+}
+try{
+const res=await axios.put(`${baseurl}/user/check`, body,{
+  headers: {
+  Authorization: `${check()[4]}`
+}})
+return (res.data.data)
+}
+catch{
+  return false
+}
+}  
+export { check,checkloginvailidity };

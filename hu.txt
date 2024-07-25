@@ -2,7 +2,7 @@ shubham
 
 Bills
 
-
+-Update the amount Paid
 -Sorting on invoice_id
 -Edit invoice toLocaleString
 -edit bills add payment url(Done)
@@ -15,3 +15,6 @@ Tasks
 Task when delete and Add 
 -1 +1
 but  one method for total 
+
+
+Appointment letter where active projects
